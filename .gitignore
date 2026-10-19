@@ -38,3 +38,7 @@ Thumbs.db
 
 # ===== Sentry =====
 .sentryclirc
+
+.vercel
+.env*
+!.env.example
