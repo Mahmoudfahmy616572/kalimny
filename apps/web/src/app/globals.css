@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+@theme {
+  /* لوحة A — "قهوة ودردشة" */
+  --color-cream: #faf6ef;
+  --color-espresso: #2b2118;
+  --color-terracotta: #e07a5f;
+  --color-terracotta-soft: #f4c3b3;
+  --color-sage: #81b29a;
+  --color-sage-soft: #d3e5db;
+  --color-card: #ffffff;
+  --color-muted: #7a6a5a;
+  --color-border: #eadfd0;
+
+  --font-sans: var(--font-arabic), var(--font-latin), ui-sans-serif, system-ui,
+    sans-serif;
+
+  --radius-organic: 1.75rem;
+}
+
+:root {
+  --background: var(--color-cream);
+  --foreground: var(--color-espresso);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+::selection {
+  background: var(--color-terracotta-soft);
+  color: var(--color-espresso);
+}
+
+/* ===== الأورب (نواة المحادثة) ===== */
+.orb {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 10rem;
+  height: 10rem;
+}
+
+.orb__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 2px solid
+    color-mix(in srgb, var(--color-terracotta) 40%, transparent);
+  opacity: 0.7;
+}
+
+.orb__ring--outer {
+  inset: -1.25rem;
+  border-color: color-mix(in srgb, var(--color-sage) 55%, transparent);
+  opacity: 0.35;
+}
+
+.orb__core {
+  width: 7rem;
+  height: 7rem;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle at 32% 28%,
+    var(--color-terracotta-soft),
+    var(--color-terracotta) 55%,
+    var(--color-espresso)
+  );
+  box-shadow: 0 14px 44px -14px
+    color-mix(in srgb, var(--color-espresso) 50%, transparent);
+  transition:
+    background 0.3s ease,
+    filter 0.3s ease;
+}
+
+@keyframes orb-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes orb-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes orb-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.orb--idle .orb__core {
+  animation: orb-breathe 4s ease-in-out infinite;
+}
+
+.orb--listening .orb__core {
+  animation: orb-breathe 2.4s ease-in-out infinite;
+  background: radial-gradient(
+    circle at 32% 28%,
+    var(--color-sage-soft),
+    var(--color-sage) 55%,
+    #3f5b4d
+  );
+}
+
+.orb--speaking .orb__core {
+  animation: orb-pulse 0.7s ease-in-out infinite;
+}
+
+.orb--connecting .orb__ring {
+  animation: orb-spin 1.4s linear infinite;
+}
+
+.orb--connecting .orb__core {
+  filter: saturate(0.55);
+}
+
+.orb--muted .orb__core {
+  animation: none;
+  background: radial-gradient(
+    circle at 32% 28%,
+    var(--color-border),
+    var(--color-muted) 60%,
+    var(--color-espresso)
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb__core,
+  .orb__ring {
+    animation: none !important;
+  }
+}
