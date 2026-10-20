@@ -510,10 +510,43 @@ export function SessionPanel({
             sampleRate: PCM_INPUT_RATE,
             onChunk: (chunk) => provider.sendAudio(toArrayBuffer(chunk)),
           });
-        } catch {
+        } catch (err) {
           micOnRef.current = false;
           setMicOn(false);
-          setError("مقدرّش نفتح الميكروفون");
+          const error = err as Error & { name?: string };
+          const message = error?.message?.toLowerCase() || "";
+          const inApp =
+            typeof navigator !== "undefined" &&
+            /fbav|fban|instagram|whatsapp|line|twitter|linkedinapp|wv/i.test(
+              navigator.userAgent,
+            );
+
+          if (
+            error?.name === "NotAllowedError" ||
+            message.includes("permission") ||
+            message.includes("denied")
+          ) {
+            setError(
+              inApp
+                ? "المتصفح جوه التطبيق ده مش بيسمح بطلب إذن الميكروفون.\n\n١) دوس على الثلاث نقاط (⋮) → افتح في المتصفح\n٢) أو افتح kalimny.vercel.app مباشرة في Chrome / Safari\n٣) جرب تشغل الميكروفون تاني"
+                : "المتصفح مانع طلب إذن الميكروفون.\n\n١) دوس على قفل الموقع 🔒 جنب العنوان\n٢) الميكروفون → السماح\n٣) اعمل تحديث للصفحة وجرب تاني\n\nلو مفيش خيار السماح، افتح إعدادات المتصفح → إعدادات الموقع → الميكروفون واحذف الموقع من المحظور وحطّه على السماح.",
+            );
+            return;
+          }
+
+          if (error?.name === "NotFoundError") {
+            setError("مفيش ميكروفون متصل بالجهاز. تأكد إن المايك شغال أو جرب جهاز تاني.");
+            return;
+          }
+
+          if (error?.name === "NotSupportedError") {
+            setError("المتصفح ده مش بيدعم الميكروفون. جرب تفتح الموقع في Chrome أو Safari.");
+            return;
+          }
+
+          setError(
+            "مقدرّش نفتح الميكروفون.\n\nلو فاتح من جوه واتساب أو فيسبوك افتح الموقع في متصفح لوحده، ده بيحل المشكلة جدًا.",
+          );
         }
       }
     } else {
@@ -719,7 +752,7 @@ export function SessionPanel({
       ) : null}
 
       {error ? (
-        <p className="mx-auto max-w-md rounded-2xl bg-terracotta-soft/50 px-4 py-3 text-center text-sm">
+        <p className="mx-auto max-w-md whitespace-pre-line rounded-2xl bg-terracotta-soft/50 px-4 py-3 text-center text-sm leading-relaxed">
           {error}
         </p>
       ) : null}
