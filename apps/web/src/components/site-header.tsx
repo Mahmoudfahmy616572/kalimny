@@ -2,9 +2,11 @@ import Link from "next/link";
 
 import { signOutAction } from "@/app/(auth)/actions";
 import { getCurrentUser } from "@/lib/auth";
+import { getXp } from "@/lib/xp/actions";
 
 export async function SiteHeader() {
   const user = await getCurrentUser();
+  const xp = user ? await getXp().catch(() => ({ xp: 0, streak: 0, lastDate: null })) : null;
 
   return (
     <header className="flex items-center justify-between border-b border-border bg-card/70 px-6 py-4 backdrop-blur">
@@ -16,6 +18,29 @@ export async function SiteHeader() {
       <nav className="flex items-center gap-4 text-sm">
         {user ? (
           <>
+            {xp && xp.streak > 0 ? (
+              <span className="hidden items-center gap-1 rounded-full border border-border px-3 py-1 text-xs font-semibold sm:flex">
+                🔥 {xp.streak}
+              </span>
+            ) : null}
+            <Link
+              href="/mistakes"
+              className="hidden rounded-full px-3 py-1.5 font-medium transition hover:bg-cream sm:inline-block"
+            >
+              أخطائي
+            </Link>
+            <Link
+              href="/flashcards"
+              className="hidden rounded-full px-3 py-1.5 font-medium transition hover:bg-cream sm:inline-block"
+            >
+              فلاش كاردز
+            </Link>
+            <Link
+              href="/profile"
+              className="hidden rounded-full px-3 py-1.5 font-medium transition hover:bg-cream sm:inline-block"
+            >
+              بروفايلي
+            </Link>
             <Link
               href="/review"
               className="rounded-full px-4 py-1.5 font-medium transition hover:bg-cream"

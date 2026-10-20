@@ -38,6 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <SiteHeader />
         </Suspense>
         {children}
+        <XpToastListener />
       </body>
     </html>
   );

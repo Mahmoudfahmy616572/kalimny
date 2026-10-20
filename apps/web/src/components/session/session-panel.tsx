@@ -615,7 +615,13 @@ export function SessionPanel({
 
   const endSession = useCallback(() => {
     const mins = startedAtRef.current ? Math.max(1, Math.round((Date.now() - startedAtRef.current) / 60000)) : effectiveLessonMinutes;
-    import("@/lib/xp/actions").then(({ awardXp }) => awardXp(mins)).catch(() => {});
+    import("@/lib/xp/actions").then(async ({ awardXp, getXp }) => {
+      await awardXp(mins);
+      const xp = await getXp();
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("kalimny:xp", { detail: { gained: Math.max(10, Math.round(mins * 2)), streak: xp.streak } }));
+      }
+    }).catch(() => {});
     void stop();
   }, [stop, effectiveLessonMinutes]);
 

@@ -70,9 +70,14 @@ export default function MistakesPage() {
       <header className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">أخطائي</h1>
-          <Link href="/review" className="text-sm text-muted transition hover:text-foreground">
-            ملخصاتي ←
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link href="/flashcards" className="text-sm text-muted transition hover:text-foreground">
+              راجعهم في فلاش كاردز →
+            </Link>
+            <Link href="/review" className="text-sm text-muted transition hover:text-foreground">
+              ملخصاتي ←
+            </Link>
+          </div>
         </div>
         <p className="text-sm text-muted">
           كل الكلمات والعبارات والقواعد اللي اتعلمتها من الجلسات السابقة، مجمعة في مكان واحد
