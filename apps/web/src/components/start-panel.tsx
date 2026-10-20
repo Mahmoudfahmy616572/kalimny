@@ -5,6 +5,7 @@ import {
   LANGUAGES,
   PERSONAS,
   PERSONAS_BY_LANGUAGE,
+  SCENARIOS,
   type CefrLevel,
   type LanguageCode,
 } from "@kalimny/shared";
@@ -45,6 +46,7 @@ export function StartPanel({
   const [language, setLanguage] = useState<LanguageCode>(
     languageOfPersona(defaultPersonaId) ?? defaultLanguage ?? "en",
   );
+  const [scenario, setScenario] = useState<string>("");
 
   const personas = PERSONAS_BY_LANGUAGE[language];
   const savedPersonaId = PERSONAS.some((p) => p.id === defaultPersonaId)
@@ -123,13 +125,45 @@ export function StartPanel({
         </div>
       </div>
 
+      <div className="flex w-full max-w-lg flex-col items-center gap-3 px-6">
+        <p className="text-sm font-semibold text-muted">سيناريو جاهز (اختياري)</p>
+        <div className="flex flex-wrap justify-center gap-2">
+          <button
+            onClick={() => setScenario("")}
+            className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+              scenario === "" ? "bg-espresso text-cream" : "border border-border hover:bg-cream"
+            }`}
+          >
+            حر
+          </button>
+          {SCENARIOS.map((s) => (
+            <button
+              key={s.id}
+              onClick={() => setScenario(s.id)}
+              className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                scenario === s.id ? "bg-espresso text-cream" : "border border-border hover:bg-cream"
+              }`}
+            >
+              {s.emoji} {s.titleAr}
+            </button>
+          ))}
+        </div>
+        <Link
+          href={`/session?lang=${language}&level=${level}&persona=${personas[0]?.id}&minutes=5`}
+          className="rounded-full border border-terracotta/40 px-5 py-2 text-sm font-semibold text-terracotta transition hover:bg-terracotta-soft/30"
+        >
+          ⚡ وضع ٥ دقائق تحدي
+        </Link>
+      </div>
+
       <ul className="grid w-full max-w-lg grid-cols-1 gap-4 px-6 sm:grid-cols-2">
         {personas.map((persona) => {
           const isSelected = savedPersonaId === persona.id;
+          const href = `/session?lang=${language}&level=${level}&persona=${persona.id}${scenario ? `&scenario=${scenario}` : ""}`;
           return (
             <li key={persona.id}>
               <Link
-                href={`/session?lang=${language}&level=${level}&persona=${persona.id}`}
+                href={href}
                 className={`flex flex-col gap-2 rounded-organic border p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-terracotta ${
                   isSelected
                     ? "border-terracotta bg-cream"

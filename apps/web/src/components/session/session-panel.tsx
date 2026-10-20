@@ -9,6 +9,7 @@ import {
   PLAN_MONTHLY_PRICE_EGP,
   TRIAL_LESSON_MINUTES,
   getUnit,
+  getScenario,
   type LanguageCode,
   type LessonDurationMinutes,
   type LessonPlan,
@@ -112,6 +113,8 @@ export function SessionPanel({
   }, []);
   const debugRef = useRef<HTMLDivElement>(null);
   const debug = useSearchParams().get("debug") === "1";
+  const scenarioId = useSearchParams().get("scenario");
+  const minutesParam = useSearchParams().get("minutes");
 
   const providerRef = useRef<GeminiLiveProvider | null>(null);
   const playerRef = useRef<PcmPlayer | null>(null);
@@ -161,11 +164,14 @@ export function SessionPanel({
     : account.trialLessonsLeft > 0;
 
   // المدة الفعلية مشتقة من الرصيد — من غير مزامنة state في effect.
-  const effectiveLessonMinutes: LessonDurationMinutes = account.hasActivePlan
-    ? allowedDurations.includes(lessonMinutes)
-      ? lessonMinutes
-      : (allowedDurations[allowedDurations.length - 1] ?? lessonMinutes)
-    : TRIAL_LESSON_MINUTES;
+  const requestedMinutes = minutesParam ? parseInt(minutesParam) : null;
+  const effectiveLessonMinutes: LessonDurationMinutes = (requestedMinutes === 5
+    ? (5 as LessonDurationMinutes)
+    : account.hasActivePlan
+      ? allowedDurations.includes(lessonMinutes)
+        ? lessonMinutes
+        : (allowedDurations[allowedDurations.length - 1] ?? lessonMinutes)
+      : TRIAL_LESSON_MINUTES) as LessonDurationMinutes;
 
   const commit = useCallback((role: Role, text: string, corrections?: Correction[]) => {
     const trimmed = text.trim();
@@ -478,7 +484,11 @@ export function SessionPanel({
       unsubscribeRef.current = provider.on(handleEvent);
       providerRef.current = provider;
 
-      const planWithRecap = recap
+      const scenario = getScenario(scenarioId);
+      const scenarioLine = scenario
+        ? `\n\n## SCENARIO (ROLEPLAY)\nAct as if you're in this real situation: ${scenario.titleAr}.\n${scenario.promptAr}\nKeep it natural, Egyptian Arabic friendly, teach ${persona.language.toUpperCase()} inside it.\nStay in this scenario unless learner clearly changes it.`
+        : "";
+      const planWithRecap = recap || scenarioLine
         ? {
             ...(activeLessonPlan ?? {
               unit: getUnit(persona.level, activeUnitIndex),
@@ -487,7 +497,11 @@ export function SessionPanel({
               recapWords: [],
               unitIndex: activeUnitIndex,
             }),
-            recapWords: [...(activeLessonPlan?.recapWords ?? []), recap],
+            recapWords: [
+              ...(activeLessonPlan?.recapWords ?? []),
+              ...(recap ? [recap] : []),
+              ...(scenarioLine ? [scenarioLine] : []),
+            ],
           }
         : activeLessonPlan;
       await provider.connect({
