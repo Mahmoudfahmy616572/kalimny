@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
 import { Suspense } from "react";
 
-import { SiteHeader, SiteHeaderFallback } from "@/components/site-header";
+import { SiteHeader } from "@/components/site-header";
+import { XpToastListener } from "@/components/xp-toast-listener";
 
 import "./globals.css";
 
@@ -34,9 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col bg-cream text-espresso font-sans">
         {/* قراءة الجلسة بتتعمل داخل حدود Suspense (مطلوب مع Cache Components) */}
-        <Suspense fallback={<SiteHeaderFallback />}>
-          <SiteHeader />
-        </Suspense>
+        <SiteHeader />
         {children}
         <XpToastListener />
       </body>
