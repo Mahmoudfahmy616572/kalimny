@@ -614,8 +614,10 @@ export function SessionPanel({
   }, [draft]);
 
   const endSession = useCallback(() => {
+    const mins = startedAtRef.current ? Math.max(1, Math.round((Date.now() - startedAtRef.current) / 60000)) : effectiveLessonMinutes;
+    import("@/lib/xp/actions").then(({ awardXp }) => awardXp(mins)).catch(() => {});
     void stop();
-  }, [stop]);
+  }, [stop, effectiveLessonMinutes]);
 
   useEffect(() => {
     if (phase !== "live" || !sessionStartedAt) return;
