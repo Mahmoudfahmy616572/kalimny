@@ -36,10 +36,10 @@ export async function SiteHeader() {
               فلاش كاردز
             </Link>
             <Link
-              href="/profile"
+              href="/leaderboard"
               className="hidden rounded-full px-3 py-1.5 font-medium transition hover:bg-cream sm:inline-block"
             >
-              بروفايلي
+              ليدر بورد
             </Link>
             <Link
               href="/review"
