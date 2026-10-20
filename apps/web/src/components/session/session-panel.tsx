@@ -630,8 +630,8 @@ export function SessionPanel({
       : "مفيش رصيد متتبقّي";
 
   return (
-    <div className="flex flex-1 flex-col gap-5 px-4 py-6 lg:h-[calc(100dvh-4rem)] lg:flex-row lg:gap-6 lg:overflow-hidden lg:px-6 lg:py-5">
-      <section className="flex min-h-0 w-full flex-col items-center gap-4 lg:flex-1 lg:overflow-hidden">
+    <div className="flex h-[calc(100dvh-4rem)] flex-col gap-5 overflow-hidden px-4 py-6 lg:flex-row lg:gap-6 lg:px-6 lg:py-5">
+      <section className="flex min-h-0 w-full flex-1 flex-col items-center gap-4 overflow-hidden">
       <header className="flex flex-col items-center gap-1 text-center">
         <p className="text-sm text-muted">
           {persona.emoji} {persona.name} · {persona.language.toUpperCase()} ·
@@ -831,7 +831,7 @@ export function SessionPanel({
       </div>
       </section>
 
-      <aside className="flex w-full flex-col overflow-hidden rounded-organic border border-border bg-card lg:h-full lg:w-[360px] lg:shrink-0">
+      <aside className="flex h-[40dvh] w-full shrink-0 flex-col overflow-hidden rounded-organic border border-border bg-card lg:h-full lg:w-[360px] lg:shrink-0">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <p className="text-sm font-semibold">
             {persona.emoji} {persona.name}
@@ -841,7 +841,7 @@ export function SessionPanel({
 
         <div
           ref={chatScrollRef}
-          className="h-[45dvh] shrink-0 space-y-3 overflow-y-auto p-4 lg:h-auto lg:min-h-0 lg:flex-1"
+          className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4"
         >
           {turns.length === 0 && !liveTutor && !liveUser ? (
             <p className="text-center text-sm text-muted">
