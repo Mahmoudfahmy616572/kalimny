@@ -10,9 +10,11 @@ import {
   type LanguageCode,
 } from "@kalimny/shared";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { ProgressMap } from "@/components/progress-map";
+import { saveHomePreferences } from "@/lib/preferences-actions";
 
 type ProgressInfo = {
   level: CefrLevel;
@@ -42,11 +44,26 @@ export function StartPanel({
   defaultPersonaId?: string | null;
   progress?: ProgressInfo;
 }) {
+  const router = useRouter();
   const [level, setLevel] = useState<CefrLevel>(defaultLevel ?? "B1");
   const [language, setLanguage] = useState<LanguageCode>(
     languageOfPersona(defaultPersonaId) ?? defaultLanguage ?? "en",
   );
   const [scenario, setScenario] = useState<string>("");
+
+  // حفظ الاختيار في الحساب — من غير كده خريطة التقدّم بتفضل عالقة
+  // بالمستوى القديم والصفحة بتقرأه من السيرفر كل مرة.
+  const chooseLevel = (next: CefrLevel) => {
+    setLevel(next);
+    void saveHomePreferences({ level: next }).then(() => router.refresh());
+  };
+
+  const chooseLanguage = (next: LanguageCode) => {
+    setLanguage(next);
+    void saveHomePreferences({ level, language: next }).then(() =>
+      router.refresh(),
+    );
+  };
 
   const personas = PERSONAS_BY_LANGUAGE[language];
   const savedPersonaId = PERSONAS.some((p) => p.id === defaultPersonaId)
@@ -83,7 +100,7 @@ export function StartPanel({
               type="button"
               role="tab"
               aria-selected={option === level}
-              onClick={() => setLevel(option)}
+              onClick={() => chooseLevel(option)}
               className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
                 option === level
                   ? "bg-espresso text-cream"
@@ -111,7 +128,7 @@ export function StartPanel({
               type="button"
               role="tab"
               aria-selected={l.code === language}
-              onClick={() => setLanguage(l.code)}
+              onClick={() => chooseLanguage(l.code)}
               className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-semibold transition ${
                 l.code === language
                   ? "bg-espresso text-cream"

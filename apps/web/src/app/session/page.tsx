@@ -82,9 +82,31 @@ async function SessionLoader({
   await requireUser();
 
   // مستخدم جديد لسه ما خلّصش onboarding → نحوّله.
-  const planContext = await getLessonPlanContext(language);
+  let planContext = await getLessonPlanContext(language);
   if (!planContext?.onboarded) {
     redirect("/onboarding");
+  }
+
+  // رابط الجلسة بمستوى مختلف عن المحفوظ (مستوى قديم محفوظ أو اتغير من
+  // الرئيسية) → نزامن الحساب عشان خريطة التقدّم والوحدات تكون لمستوى واحد.
+  if (planContext.level && planContext.level !== level) {
+    try {
+      const supabase = await createClient();
+      const { error } = await supabase.rpc("save_home_preferences", {
+        p_level: level,
+        p_language: language,
+      });
+      if (error) {
+        console.error("[session] save_home_preferences failed:", error.message);
+      } else {
+        planContext = (await getLessonPlanContext(language)) ?? planContext;
+      }
+    } catch (error) {
+      console.error(
+        "[session] save_home_preferences failed:",
+        error instanceof Error ? error.message : error,
+      );
+    }
   }
 
   const persona = await resolvePersona(
