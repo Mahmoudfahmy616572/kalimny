@@ -15,16 +15,17 @@ Kalimny is not a chat-bot with a text box. It opens a **live, low-latency bidire
 3. [Architecture](#architecture)
 4. [Tech stack](#tech-stack)
 5. [How the voice session works](#how-the-voice-session-works)
-6. [The 3D avatar](#the-3d-avatar)
-7. [Personas & voice DNA](#personas--voice-dna)
-8. [Curriculum & progress](#curriculum--progress)
-9. [Lesson quota & billing model](#lesson-quota--billing-model)
-10. [Data model](#data-model)
-11. [Security model](#security-model)
-12. [Project structure](#project-structure)
-13. [Running locally](#running-locally)
-14. [Deployment](#deployment)
-15. [Engineering highlights](#engineering-highlights)
+6. [Sign-up & email OTP](#sign-up--email-otp)
+7. [The 3D avatar](#the-3d-avatar)
+8. [Personas & voice DNA](#personas--voice-dna)
+9. [Curriculum & progress](#curriculum--progress)
+10. [Lesson quota & billing model](#lesson-quota--billing-model)
+11. [Data model](#data-model)
+12. [Security model](#security-model)
+13. [Project structure](#project-structure)
+14. [Running locally](#running-locally)
+15. [Deployment](#deployment)
+16. [Engineering highlights](#engineering-highlights)
 
 ---
 
@@ -67,6 +68,7 @@ Key design decisions:
 
 ### Accounts & quota
 - Supabase Auth (email/password) with server-side session validation.
+- **Email verification via a 4-digit OTP** delivered over our own SMTP relay (Brevo), replacing Supabase's default confirmation email (which is fixed at 6 digits and rate-limited). See [Sign-up & email OTP](#sign-up--email-otp).
 - **Trial + subscription model** enforced atomically in the database.
 
 ---
@@ -117,6 +119,7 @@ interface VoiceProvider {
 | 3D | **Three.js** + **@react-three/fiber** |
 | Voice AI | **Google Gemini Live API** (`gemini-3.8-live`), Gemini Flash for summaries |
 | Auth / DB | **Supabase** (Postgres, Auth, Row-Level Security, RPC) |
+| Email | **Brevo SMTP** relay via **nodemailer** (4-digit OTP verification) |
 | Realtime transport | Browser WebSocket (`BidiGenerateContentConstrained`) |
 | Hosting | **Vercel** |
 | Monorepo | **npm workspaces** |
@@ -149,6 +152,19 @@ End-to-end flow of a single lesson:
 5. **Reconnection** — on unexpected close, if a resumption handle exists the provider reconnects with backoff `[500, 1s, 2s, 4s, 8s]` and resumes the same session under the same token.
 
 6. **End of lesson** — the client reports duration to `/api/voice/lesson/end`. The server settles the quota (`endLesson`), and — inside `after()` so it never blocks settlement — triggers **summary generation**. A `/api/voice/summary-status` endpoint is polled by the UI to display the finished summary card.
+
+---
+
+## Sign-up & email OTP
+
+Email confirmation is handled by a **custom 4-digit OTP flow** rather than Supabase's built-in email, for two concrete reasons: Supabase's OTP length is fixed at 6 digits (not configurable), and its email sender is rate-limited.
+
+1. **Sign-up** — `signUpAction` creates the user with `supabase.auth.signUp`. If no session is returned (confirmation required), it calls `issueEmailOtp` → `create_email_otp` (RPC) to store a **SHA-256 hash** of a random 4-digit code with a 10-minute TTL and a 5-attempt cap, then sends the code via **Brevo SMTP** (nodemailer) and redirects to `/verify?email=…`.
+2. **Verify** — `/verify` collects the 4 digits and calls `verifyOtpAction`, which runs `consume_email_otp` (RPC). On `ok`, the server confirms the user's email through the Supabase admin API and redirects to `/onboarding`. Wrong codes increment the attempt counter; re-issuing a code resets it.
+3. **Resend** — `resendOtpAction` re-issues a fresh code (resolving the user id by email via the admin API).
+4. **Login** — `signInAction` redirects users whose email is still unconfirmed to `/verify`.
+
+The **code is never stored in plaintext** — only its hash — and the `email_otps` table has RLS enabled with no policies, so it is reachable only through the `SECURITY DEFINER` functions, which are granted to `service_role` alone.
 
 ---
 
@@ -227,6 +243,8 @@ Postgres (Supabase) with RLS. Migrations in `supabase/migrations/`:
 | `0004_fix_ambiguous_columns.sql` | RPC column disambiguation fix |
 | `0005_user_preferences.sql` | Onboarding preferences + `get_lesson_plan_context` |
 | `0006_persona_choice.sql` | Saved persona + `save_persona` RPC |
+| `0007_grants.sql` | Explicit table grants + default privileges (Supabase's Oct 2026 change) |
+| `0008_email_otp.sql` | `email_otps` table + `create_email_otp` / `consume_email_otp` RPCs |
 
 ---
 
@@ -235,6 +253,7 @@ Postgres (Supabase) with RLS. Migrations in `supabase/migrations/`:
 - **Never trust the client**: lesson duration is normalized server-side; the master Gemini key never leaves the server; tokens are single-use and short-lived.
 - **Auth on every request**: the token and lesson endpoints validate the Supabase session; the session route redirects unauthenticated users.
 - **Server-only modules** (`import "server-only"`) guard quota, summary, and Supabase-server code from leaking into client bundles.
+- **Hashed OTPs** — verification codes are stored only as salted SHA-256 hashes, with a TTL and an attempt cap; the table has RLS with no policies and is reachable solely via `service_role`-only RPCs.
 - **Secrets** live only in `.env.local` / Vercel env vars; nothing sensitive is committed.
 
 ---
@@ -244,7 +263,7 @@ Postgres (Supabase) with RLS. Migrations in `supabase/migrations/`:
 ```
 apps/web/src/
 ├── app/
-│   ├── (auth)/                 # login, signup, onboarding (server actions)
+│   ├── (auth)/                 # login, signup, verify (OTP), onboarding (server actions)
 │   ├── api/voice/
 │   │   ├── token/route.ts      # quota + ephemeral Gemini token
 │   │   ├── lesson/end/route.ts # quota settlement + summary trigger
@@ -263,7 +282,9 @@ apps/web/src/
 └── lib/
     ├── voice/                  # audio pipeline + Gemini Live provider
     ├── lessons/                # quota + summary
-    ├── supabase/               # client / server / proxy session handling
+    ├── supabase/               # client / server / admin / proxy session handling
+    ├── otp.ts                  # issue/verify 4-digit email OTP (hashing, TTL)
+    ├── email.ts                # Brevo SMTP sender (nodemailer)
     ├── auth.ts
     └── preferences.ts
 
@@ -290,6 +311,13 @@ GEMINI_API_KEY=...
 NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 SUPABASE_SERVICE_ROLE_KEY=...
+# Email OTP (Brevo SMTP relay)
+SMTP_HOST=smtp-relay.brevo.com
+SMTP_PORT=587
+SMTP_USER=...
+SMTP_PASS=...
+SMTP_FROM=...
+SMTP_FROM_NAME=Kalimny
 
 # 3. Apply migrations (Supabase SQL editor or CLI), then:
 npm run dev        # http://localhost:3000
@@ -312,7 +340,7 @@ Deployed on **Vercel** with the monorepo configured as:
 
 - **Root Directory:** `apps/web`
 - **Framework preset:** Next.js
-- **Environment variables:** `GEMINI_API_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
+- **Environment variables:** `GEMINI_API_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and the six `SMTP_*` variables for the email-OTP relay
 
 Supabase Auth **Site URL** and **Redirect URLs** must include the production domain (`https://<app>.vercel.app/auth/callback`).
 
@@ -329,6 +357,7 @@ Things worth calling out on a résumé:
 - **A fully procedural 3D character.** No assets — a rigged-looking avatar with audio-driven lip-sync and a mood/gesture state machine, built from Three.js primitives.
 - **Distinct AI personalities.** A structured `PersonaStyle` compiled into rich system instructions, giving each of eight tutors a distinct voice, energy, humor, and correction style.
 - **Database-enforced economy.** Atomic `SECURITY DEFINER` RPCs make quota handling race-free and consistent; TypeScript holds no billing logic.
+- **Custom email-OTP verification.** Built a hashed, TTL'd, attempt-capped 4-digit OTP flow (with its own Brevo SMTP relay) to work around Supabase's fixed 6-digit, rate-limited confirmation email.
 - **Modern Next.js 16 patterns.** Cache Components, Partial Prerendering, `<Suspense>` boundaries on dynamic routes, and React Server Components — with server actions for auth/onboarding.
 - **Monorepo discipline.** A framework-agnostic shared domain package (consumed as raw TS) keeps server and client types and rules in lockstep.
 
