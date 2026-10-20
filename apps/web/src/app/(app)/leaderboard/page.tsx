@@ -1,20 +1,17 @@
+import { Suspense } from "react";
+
 import { getLeaderboard } from "@/lib/xp/leaderboard-actions";
 
 export const metadata = {
   title: "ليدر بورد | كلمني",
 };
 
-export default async function LeaderboardPage() {
+async function LeaderboardContent() {
   const lb = await getLeaderboard();
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-8">
-      <header className="flex flex-col gap-2">
-        <h1 className="text-2xl font-bold">ليدر بورد</h1>
-        <p className="text-sm text-muted">أعلى ١٠ حسب نقاط XP</p>
-      </header>
-
-      <div className="rounded-organic border border-border bg-card overflow-hidden">
+    <>
+      <div className="overflow-hidden rounded-organic border border-border bg-card">
         <table className="w-full">
           <thead className="bg-cream/50">
             <tr>
@@ -42,6 +39,20 @@ export default async function LeaderboardPage() {
           ترتيبك: #{lb.myRank} · {lb.myXp} XP
         </div>
       ) : null}
+    </>
+  );
+}
+
+export default function LeaderboardPage() {
+  return (
+    <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-8">
+      <header className="flex flex-col gap-2">
+        <h1 className="text-2xl font-bold">ليدر بورد</h1>
+        <p className="text-sm text-muted">أعلى ١٠ حسب نقاط XP</p>
+      </header>
+      <Suspense fallback={<div className="text-center text-sm text-muted">جارٍ التحميل...</div>}>
+        <LeaderboardContent />
+      </Suspense>
     </main>
   );
 }

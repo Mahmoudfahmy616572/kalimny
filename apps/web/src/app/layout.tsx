@@ -35,7 +35,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col bg-cream text-espresso font-sans">
         {/* قراءة الجلسة بتتعمل داخل حدود Suspense (مطلوب مع Cache Components) */}
-        <SiteHeader />
+        <Suspense
+          fallback={
+            <header className="flex items-center justify-between border-b border-border bg-card/70 px-6 py-4 backdrop-blur">
+              <span className="flex items-center gap-2 text-lg font-bold">☕ كلمني</span>
+            </header>
+          }
+        >
+          <SiteHeader />
+        </Suspense>
         {children}
         <XpToastListener />
       </body>
