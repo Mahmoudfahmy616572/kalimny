@@ -18,16 +18,18 @@ const AvatarScene = dynamic(
 export function Avatar(props: AvatarProps) {
   return (
     <div
-      className="flex flex-col items-center gap-3"
+      className="flex h-full w-full flex-col items-center justify-center gap-2 lg:gap-3"
       role="img"
       aria-label={ORB_LABELS[props.state]}
       data-state={props.state}
     >
-      <div className="relative h-[clamp(150px,24dvh,240px)] w-full max-w-[240px] lg:h-[clamp(210px,34dvh,340px)] lg:max-w-[340px]">
+      <div className="relative h-full max-h-[240px] min-h-[120px] w-full max-w-[240px] flex-1 lg:max-h-[340px] lg:max-w-[340px]">
         <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_50%_45%,rgba(201,111,74,0.18),transparent_66%)]" />
         <AvatarScene {...props} />
       </div>
-      <p className="text-sm font-medium text-muted">{ORB_LABELS[props.state]}</p>
+      <p className="hidden text-sm font-medium text-muted lg:block">
+        {ORB_LABELS[props.state]}
+      </p>
     </div>
   );
 }

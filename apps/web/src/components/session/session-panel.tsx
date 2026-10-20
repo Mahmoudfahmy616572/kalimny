@@ -630,15 +630,15 @@ export function SessionPanel({
       : "مفيش رصيد متتبقّي";
 
   return (
-    <div className="flex h-[calc(100dvh-4rem)] flex-col gap-3 overflow-hidden px-4 py-3 lg:flex-row lg:gap-6 lg:px-6 lg:py-5">
-      <section className="flex w-full shrink-0 flex-col items-center gap-2 lg:min-h-0 lg:flex-1 lg:gap-4 lg:overflow-hidden">
-      <header className="flex flex-col items-center gap-0.5 text-center lg:gap-1">
-        <p className="text-xs text-muted lg:text-sm">
+    <div className="flex h-[calc(100dvh-4rem)] flex-col gap-3 overflow-hidden px-3 py-3 lg:flex-row lg:gap-6 lg:px-6 lg:py-5">
+      <section className="flex min-h-0 w-full max-h-[36dvh] flex-col items-center gap-1 overflow-hidden lg:max-h-none lg:flex-1 lg:gap-4">
+      <header className="flex w-full flex-col items-center gap-0.5 text-center lg:gap-1">
+        <p className="hidden text-sm text-muted lg:block">
           {persona.emoji} {persona.name} · {persona.language.toUpperCase()} ·
           المستوى {persona.level}
         </p>
-        <h1 className="text-lg font-bold lg:text-2xl">جلسة محادثة</h1>
-        <p className="text-xs text-muted lg:text-sm">
+        <h1 className="hidden text-2xl font-bold lg:block">جلسة محادثة</h1>
+        <p className="hidden text-sm text-muted lg:block">
           {account.hasActivePlan ? (
             <>
               فاضل لك{" "}
@@ -661,8 +661,21 @@ export function SessionPanel({
         </p>
       </header>
 
+      <div className="flex w-full items-center justify-between gap-2 lg:hidden">
+        <p className="min-w-0 truncate text-xs text-muted">
+          {persona.emoji} {persona.name} · {persona.level}
+        </p>
+        <span className="shrink-0 rounded-full bg-cream px-2.5 py-1 text-[11px] font-semibold text-muted">
+          {account.hasActivePlan
+            ? `فاضل ${account.paidMinutesLeft} دقيقة`
+            : account.trialLessonsLeft > 0
+              ? `فاضل ${account.trialLessonsLeft} دروس تجريبية`
+              : balanceLabel}
+        </span>
+      </div>
+
       {unitCount ? (
-        <div className="mx-auto w-full max-w-md">
+        <div className="mx-auto hidden w-full max-w-md lg:block">
           <ProgressMap
             level={persona.level}
             unitIndex={activeUnitIndex}
@@ -675,7 +688,7 @@ export function SessionPanel({
 
       <div
         ref={avatarBoxRef}
-        className="relative flex w-full items-center justify-center lg:min-h-0 lg:flex-1"
+        className="relative flex min-h-0 w-full flex-[0.8] items-center justify-center"
       >
         <Avatar
           personaId={persona.id}
@@ -793,7 +806,7 @@ export function SessionPanel({
           </div>
         ) : null}
 
-        <div className="flex justify-center gap-3">
+        <div className="flex w-full justify-center gap-2 px-1 lg:gap-3">
           {phase === "live" ? (
             <>
               <button
@@ -832,7 +845,7 @@ export function SessionPanel({
       </section>
 
       <aside className="flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-organic border border-border bg-card lg:h-full lg:w-[360px] lg:flex-none lg:shrink-0">
-        <div className="flex items-center justify-between border-b border-border px-4 py-3">
+        <div className="flex items-center justify-between border-b border-border px-3 py-2 lg:px-4 lg:py-3">
           <p className="text-sm font-semibold">
             {persona.emoji} {persona.name}
           </p>
@@ -841,7 +854,7 @@ export function SessionPanel({
 
         <div
           ref={chatScrollRef}
-          className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4"
+          className="min-h-0 flex-1 space-y-3 overflow-y-auto p-3 lg:p-4"
         >
           {turns.length === 0 && !liveTutor && !liveUser ? (
             <p className="text-center text-sm text-muted">
@@ -886,7 +899,7 @@ export function SessionPanel({
           </ul>
         </div>
 
-        <div className="flex gap-2 border-t border-border p-3">
+        <div className="flex gap-2 border-t border-border p-2 lg:p-3">
           <input
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
@@ -894,13 +907,13 @@ export function SessionPanel({
               if (event.key === "Enter") sendDraft();
             }}
             placeholder="اكتب لو الميكروفون مقفول…"
-            className="flex-1 rounded-2xl border border-border bg-card px-4 py-3 text-sm outline-none transition focus:border-terracotta focus:ring-2 focus:ring-terracotta-soft"
+            className="flex-1 rounded-2xl border border-border bg-card px-3 py-2.5 text-sm outline-none transition focus:border-terracotta focus:ring-2 focus:ring-terracotta-soft lg:px-4 lg:py-3"
           />
           <button
             type="button"
             onClick={sendDraft}
             disabled={phase !== "live" || !draft.trim()}
-            className="rounded-2xl border border-border px-4 py-3 text-sm font-semibold transition hover:bg-cream disabled:opacity-50"
+            className="rounded-2xl border border-border px-3 py-2.5 text-sm font-semibold transition hover:bg-cream disabled:opacity-50 lg:px-4 lg:py-3"
           >
             إرسال
           </button>
