@@ -93,7 +93,7 @@ export class GeminiLiveProvider implements VoiceProvider {
         model: `models/${options.model}`,
         generationConfig: {
           responseModalities: ["AUDIO"],
-          temperature: 1.0,
+          temperature: 0.8,
           speechConfig: {
             voiceConfig: {
               prebuiltVoiceConfig: {
@@ -118,8 +118,12 @@ export class GeminiLiveProvider implements VoiceProvider {
         sessionResumption: this.resumptionHandle
           ? { handle: this.resumptionHandle }
           : {},
-        inputAudioTranscription: {},
-        outputAudioTranscription: {},
+        inputAudioTranscription: {
+          languageCodes: ["ar-EG", "ar"],
+        },
+        outputAudioTranscription: {
+          languageCodes: ["ar-EG", options.persona.language],
+        },
       },
     };
   }
@@ -346,7 +350,18 @@ export class GeminiLiveProvider implements VoiceProvider {
       | { text?: string; finished?: boolean }
       | undefined;
     if (inputTranscription?.text !== undefined) {
-      this.userText += inputTranscription.text;
+      const chunk = inputTranscription.text.trim();
+      if (!chunk) {
+        return;
+      }
+      // لو الموديل بيبدأ يكتب فجأة من غير صوت واضح، بنطنّش عشان ما يهلوسش وأنت ساكت
+      if (!this.tutorMidTurn && this.userText.length === 0 && this.tutorText.length === 0) {
+        // أول كلمتين بس غالبًا نسمح بيهم لو فعلاً فيه كلام
+        if (chunk.length < 2) {
+          return;
+        }
+      }
+      this.userText += chunk;
       const final = Boolean(inputTranscription.finished);
       this.emit({ type: "user-transcript", text: this.userText, final });
       if (final) {
