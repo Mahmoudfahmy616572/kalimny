@@ -108,7 +108,7 @@ export class GeminiLiveProvider implements VoiceProvider {
               text: buildSystemInstructions(
                 options.persona,
                 options.lessonPlan,
-              ),
+              ) + (options.lessonPlan?.recapWords?.find((r) => r.startsWith("## MEMORY BETWEEN")) ? "\n\n" + options.lessonPlan.recapWords.find((r) => r.startsWith("## MEMORY BETWEEN"))! : ""),
             },
           ],
         },

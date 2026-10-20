@@ -429,6 +429,8 @@ export function SessionPanel({
     let provider: GeminiLiveProvider | null = null;
 
     try {
+      const { getSessionRecap } = await import("@/app/(app)/session/recap-actions");
+      const recap = await getSessionRecap(persona.language);
       const response = await fetch("/api/voice/token", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -476,11 +478,23 @@ export function SessionPanel({
       unsubscribeRef.current = provider.on(handleEvent);
       providerRef.current = provider;
 
+      const planWithRecap = recap
+        ? {
+            ...(activeLessonPlan ?? {
+              unit: getUnit(persona.level, activeUnitIndex),
+              goal: null,
+              interests: [],
+              recapWords: [],
+              unitIndex: activeUnitIndex,
+            }),
+            recapWords: [...(activeLessonPlan?.recapWords ?? []), recap],
+          }
+        : activeLessonPlan;
       await provider.connect({
         persona,
         token: data.token,
         model: data.model,
-        lessonPlan: activeLessonPlan,
+        lessonPlan: planWithRecap,
       });
 
       if (micOnRef.current) {
