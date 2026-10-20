@@ -354,12 +354,14 @@ export class GeminiLiveProvider implements VoiceProvider {
       if (!chunk) {
         return;
       }
-      // لو الموديل بيبدأ يكتب فجأة من غير صوت واضح، بنطنّش عشان ما يهلوسش وأنت ساكت
+      // فلتر أقوى للهلوسة وأنت ساكت
+      const hasArabic = /[\u0600-\u06FF]/.test(chunk);
+      const hasTarget = /[A-Za-z]/.test(chunk);
       if (!this.tutorMidTurn && this.userText.length === 0 && this.tutorText.length === 0) {
-        // أول كلمتين بس غالبًا نسمح بيهم لو فعلاً فيه كلام
-        if (chunk.length < 2) {
-          return;
-        }
+        if (chunk.length < 2) return;
+        if (!hasArabic && !hasTarget) return;
+        const weird = !hasArabic && chunk.length > 3;
+        if (weird) return;
       }
       this.userText += chunk;
       const final = Boolean(inputTranscription.finished);

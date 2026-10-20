@@ -35,7 +35,8 @@ import { type OrbState } from "./orb";
 
 type Phase = "idle" | "connecting" | "live" | "ended";
 type Role = "user" | "tutor";
-type Turn = { id: number; role: Role; text: string };
+type Correction = { original: string; corrected: string; noteAr: string };
+type Turn = { id: number; role: Role; text: string; corrections?: Correction[] };
 
 /** حالة كارت الملخص اللي بيظهر بعد نهاية الجلسة */
 type SummaryState = {
@@ -83,6 +84,9 @@ export function SessionPanel({
   const [turns, setTurns] = useState<Turn[]>([]);
   const [liveUser, setLiveUser] = useState("");
   const [liveTutor, setLiveTutor] = useState("");
+  const [correctionsByTurn, setCorrectionsByTurn] = useState<Record<number, Correction[]>>({});
+  const [sessionStartedAt, setSessionStartedAt] = useState<number | null>(null);
+  const [elapsed, setElapsed] = useState(0);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [draft, setDraft] = useState("");
   const [account, setAccount] = useState<LessonAccount>(initialAccount);
@@ -163,12 +167,15 @@ export function SessionPanel({
       : (allowedDurations[allowedDurations.length - 1] ?? lessonMinutes)
     : TRIAL_LESSON_MINUTES;
 
-  const commit = useCallback((role: Role, text: string) => {
+  const commit = useCallback((role: Role, text: string, corrections?: Correction[]) => {
     const trimmed = text.trim();
     if (trimmed) {
-      const turn: Turn = { id: nextId(), role, text: trimmed };
+      const turn: Turn = { id: nextId(), role, text: trimmed, corrections };
       setTurns((prev) => [...prev, turn]);
       turnsRef.current = [...turnsRef.current, turn];
+      if (role === "user" && corrections && corrections.length > 0) {
+        setCorrectionsByTurn((prev) => ({ ...prev, [turn.id]: corrections }));
+      }
     }
     if (role === "user") {
       liveUserRef.current = "";
@@ -187,6 +194,7 @@ export function SessionPanel({
           else if (event.status === "live") {
             setPhase("live");
             setWaveKey((key) => key + 1);
+            if (!sessionStartedAt) setSessionStartedAt(Date.now());
           } else if (event.status === "idle") setPhase("idle");
           else if (event.status === "ended") {
             // الموديل قفل الجلسة (خلص وقتها) — نسوّي الرصيد ونعرض الملخص.
@@ -217,9 +225,24 @@ export function SessionPanel({
           setIsSpeaking(false);
           break;
         }
+        case "correction": {
+          setCorrectionsByTurn((prev) => {
+            const lastUser = [...turnsRef.current].reverse().find((t) => t.role === "user");
+            if (!lastUser) return prev;
+            return { ...prev, [lastUser.id]: [{ original: event.original, corrected: event.corrected, noteAr: event.noteAr }] };
+          });
+          break;
+        }
         case "turn-complete": {
           setIsSpeaking(false);
-          if (liveUserRef.current) commit("user", liveUserRef.current);
+          if (liveUserRef.current) {
+            const lastCorrections = (() => {
+              const lastUser = [...turnsRef.current].reverse().find((t) => t.role === "user");
+              if (!lastUser) return undefined;
+              return correctionsByTurn[lastUser.id] || turns.find((t) => t.id === lastUser.id)?.corrections;
+            })();
+            commit("user", liveUserRef.current, lastCorrections);
+          }
           if (liveTutorRef.current) commit("tutor", liveTutorRef.current);
           break;
         }
@@ -567,6 +590,12 @@ export function SessionPanel({
   }, [stop]);
 
   useEffect(() => {
+    if (phase !== "live" || !sessionStartedAt) return;
+    const id = setInterval(() => setElapsed(Date.now() - sessionStartedAt), 1000);
+    return () => clearInterval(id);
+  }, [phase, sessionStartedAt]);
+
+  useEffect(() => {
     return () => {
       void stop();
     };
@@ -693,6 +722,13 @@ export function SessionPanel({
           )}
         </p>
       </header>
+
+      {phase === "live" && sessionStartedAt ? (
+        <div className="flex w-full items-center justify-between rounded-full border border-border px-3 py-1 text-[11px] lg:hidden">
+          <span className="text-muted">استغرقنا {Math.floor(elapsed / 60000)}:{String(Math.floor((elapsed % 60000) / 1000)).padStart(2, "0")}</span>
+          <span className="font-semibold">متبقي {Math.max(0, effectiveLessonMinutes * 60 - Math.floor(elapsed / 1000)) >= 60 ? `${Math.floor(Math.max(0, effectiveLessonMinutes * 60 - Math.floor(elapsed / 1000)) / 60)}:${String(Math.max(0, effectiveLessonMinutes * 60 - Math.floor(elapsed / 1000)) % 60).padStart(2, "0")}` : `${Math.max(0, effectiveLessonMinutes * 60 - Math.floor(elapsed / 1000))} ث`}</span>
+        </div>
+      ) : null}
 
       <div className="flex w-full items-center justify-between gap-2 lg:hidden">
         <p className="min-w-0 truncate text-xs text-muted">
@@ -839,40 +875,48 @@ export function SessionPanel({
           </div>
         ) : null}
 
-        <div className="flex w-full justify-center gap-2 px-1 lg:gap-3">
-          {phase === "live" ? (
-            <>
+        <div className="flex flex-col items-center gap-2">
+          {phase === "live" && micOn ? (
+            <div className="inline-flex items-center gap-2 rounded-full border border-sage/40 bg-sage-soft/40 px-3 py-1 text-xs font-semibold shadow-sm">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-sage" />
+              بسمعك دلوقتي...
+            </div>
+          ) : null}
+          <div className="flex w-full justify-center gap-2 px-1 lg:gap-3">
+            {phase === "live" ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => void toggleMic()}
+                  className="rounded-full border border-border px-5 py-3 text-sm font-semibold transition hover:bg-cream"
+                >
+                  {micOn ? "اكتم الميكروفون" : "شغّل الميكروفون"}
+                </button>
+                <button
+                  type="button"
+                  onClick={endSession}
+                  className="rounded-full bg-terracotta px-6 py-3 text-sm font-semibold text-white transition hover:brightness-95"
+                >
+                  إنهاء الجلسة
+                </button>
+              </>
+            ) : (
               <button
                 type="button"
-                onClick={() => void toggleMic()}
-                className="rounded-full border border-border px-5 py-3 text-sm font-semibold transition hover:bg-cream"
+                onClick={() => void start()}
+                disabled={phase === "connecting" || !canStart}
+                className="rounded-full bg-terracotta px-8 py-3 text-sm font-semibold text-white transition hover:brightness-95 disabled:opacity-60"
               >
-                {micOn ? "اكتم الميكروفون" : "شغّل الميكروفون"}
+                {phase === "connecting"
+                  ? "بتتجهّز…"
+                  : !canStart
+                    ? "مفيش رصيد — اشترك"
+                    : turns.length > 0
+                      ? "ابدأ تاني"
+                      : "ابدأ المحادثة"}
               </button>
-              <button
-                type="button"
-                onClick={endSession}
-                className="rounded-full bg-terracotta px-6 py-3 text-sm font-semibold text-white transition hover:brightness-95"
-              >
-                إنهاء الجلسة
-              </button>
-            </>
-          ) : (
-            <button
-              type="button"
-              onClick={() => void start()}
-              disabled={phase === "connecting" || !canStart}
-              className="rounded-full bg-terracotta px-8 py-3 text-sm font-semibold text-white transition hover:brightness-95 disabled:opacity-60"
-            >
-              {phase === "connecting"
-                ? "بتتجهّز…"
-                : !canStart
-                  ? "مفيش رصيد — اشترك"
-                  : turns.length > 0
-                    ? "ابدأ تاني"
-                    : "ابدأ المحادثة"}
-            </button>
-          )}
+            )}
+          </div>
         </div>
       </div>
       </section>
@@ -896,9 +940,12 @@ export function SessionPanel({
           ) : null}
 
           <ul className="flex flex-col gap-3">
-            {turns.map((turn) => (
-              <li
-                key={turn.id}
+          {turns.map((turn) => (
+            <li
+              key={turn.id}
+              className="flex flex-col"
+            >
+              <div
                 className={
                   turn.role === "user"
                     ? "self-start rounded-3xl rounded-ss-sm bg-cream px-4 py-2 text-sm"
@@ -909,8 +956,19 @@ export function SessionPanel({
                   {turn.role === "user" ? "أنت" : persona.name}
                 </span>
                 {turn.text}
-              </li>
-            ))}
+              </div>
+              {turn.role === "user" ? (
+                <div className="mt-1.5 self-start space-y-1 px-1">
+                  {(correctionsByTurn[turn.id] || turn.corrections || []).map((c, idx) => (
+                    <div key={idx} className="max-w-[280px] rounded-2xl border border-border bg-card px-3 py-2 text-xs shadow-sm">
+                      <p className="font-semibold text-terracotta">تصحيح: {c.corrected}</p>
+                      {c.noteAr ? <p className="mt-0.5 text-muted">{c.noteAr}</p> : null}
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </li>
+          ))}
 
             {liveUser ? (
               <li className="self-start rounded-3xl rounded-ss-sm border border-dashed border-border px-4 py-2 text-sm text-muted">
