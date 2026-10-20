@@ -176,6 +176,18 @@ export function SessionPanel({
   const commit = useCallback((role: Role, text: string, corrections?: Correction[]) => {
     const trimmed = text.trim();
     if (trimmed) {
+      const last = turnsRef.current[turnsRef.current.length - 1];
+      if (last && last.role === role && last.text === trimmed) {
+        // نفس الرسالة اتكررت — متجاهلها
+        if (role === "user") {
+          liveUserRef.current = "";
+          setLiveUser("");
+        } else {
+          liveTutorRef.current = "";
+          setLiveTutor("");
+        }
+        return;
+      }
       const turn: Turn = { id: nextId(), role, text: trimmed, corrections };
       setTurns((prev) => [...prev, turn]);
       turnsRef.current = [...turnsRef.current, turn];

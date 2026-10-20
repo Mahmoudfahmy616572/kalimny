@@ -44,6 +44,9 @@ export class GeminiLiveProvider implements VoiceProvider {
 
   private userText = "";
   private tutorText = "";
+  /** آخر نص نهائي اتبعت لكل طرف — لمنع تكرار نفس الرسالة مرتين */
+  private lastFinalUser = "";
+  private lastFinalTutor = "";
   /** صحّي لو المدرب لسه بيتكلم — لازم نعرفها عشان نعرف الجملة اتقطّعت */
   private tutorMidTurn = false;
 
@@ -78,6 +81,8 @@ export class GeminiLiveProvider implements VoiceProvider {
     this.reconnectAttempts = 0;
     this.userText = "";
     this.tutorText = "";
+    this.lastFinalUser = "";
+    this.lastFinalTutor = "";
     this.tutorMidTurn = false;
     this.options = options;
     this.resumptionHandle = null;
@@ -350,24 +355,34 @@ export class GeminiLiveProvider implements VoiceProvider {
       | { text?: string; finished?: boolean }
       | undefined;
     if (inputTranscription?.text !== undefined) {
-      const chunk = inputTranscription.text.trim();
-      if (!chunk) {
+      const incoming = inputTranscription.text;
+      if (!incoming.trim()) {
         return;
       }
       // فلتر أقوى للهلوسة وأنت ساكت
-      const hasArabic = /[\u0600-\u06FF]/.test(chunk);
-      const hasTarget = /[A-Za-z]/.test(chunk);
+      const hasArabic = /[\u0600-\u06FF]/.test(incoming);
+      const hasTarget = /[A-Za-z]/.test(incoming);
       if (!this.tutorMidTurn && this.userText.length === 0 && this.tutorText.length === 0) {
-        if (chunk.length < 2) return;
+        if (incoming.trim().length < 2) return;
         if (!hasArabic && !hasTarget) return;
-        const weird = !hasArabic && chunk.length > 3;
+        const weird = !hasArabic && incoming.trim().length > 3;
         if (weird) return;
       }
-      this.userText += chunk;
+      // لو النص الجديد فيه اللي اتجمّع قبل كده → نستبدله بدل التكرار
+      if (this.userText && incoming.startsWith(this.userText)) {
+        this.userText = incoming;
+      } else {
+        this.userText += incoming;
+      }
       const final = Boolean(inputTranscription.finished);
-      this.emit({ type: "user-transcript", text: this.userText, final });
       if (final) {
+        if (this.userText !== this.lastFinalUser) {
+          this.lastFinalUser = this.userText;
+          this.emit({ type: "user-transcript", text: this.userText, final: true });
+        }
         this.userText = "";
+      } else {
+        this.emit({ type: "user-transcript", text: this.userText, final: false });
       }
     }
 
@@ -376,11 +391,23 @@ export class GeminiLiveProvider implements VoiceProvider {
       | undefined;
     if (outputTranscription?.text !== undefined) {
       this.tutorMidTurn = true;
-      this.tutorText += outputTranscription.text;
+      const chunk = outputTranscription.text;
+      // أحيانًا السيرفر يعيد النص كاملًا بدل القطعة الجديدة — بدل ما نكرّره
+      // نحط النص كامل مكان اللي اتجمّع قبل كده.
+      if (this.tutorText && chunk.startsWith(this.tutorText)) {
+        this.tutorText = chunk;
+      } else {
+        this.tutorText += chunk;
+      }
       const final = Boolean(outputTranscription.finished);
-      this.emit({ type: "tutor-transcript", text: this.tutorText, final });
       if (final) {
+        if (this.tutorText !== this.lastFinalTutor) {
+          this.lastFinalTutor = this.tutorText;
+          this.emit({ type: "tutor-transcript", text: this.tutorText, final: true });
+        }
         this.tutorText = "";
+      } else {
+        this.emit({ type: "tutor-transcript", text: this.tutorText, final: false });
       }
     }
 
@@ -399,14 +426,16 @@ export class GeminiLiveProvider implements VoiceProvider {
   }
 
   private flushTranscripts(): void {
-    if (this.tutorText) {
+    if (this.tutorText && this.tutorText !== this.lastFinalTutor) {
+      this.lastFinalTutor = this.tutorText;
       this.emit({ type: "tutor-transcript", text: this.tutorText, final: true });
-      this.tutorText = "";
     }
-    if (this.userText) {
+    this.tutorText = "";
+    if (this.userText && this.userText !== this.lastFinalUser) {
+      this.lastFinalUser = this.userText;
       this.emit({ type: "user-transcript", text: this.userText, final: true });
-      this.userText = "";
     }
+    this.userText = "";
   }
 
   sendAudio(chunk: ArrayBuffer): void {
