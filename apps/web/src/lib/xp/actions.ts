@@ -24,53 +24,32 @@ export async function getXp() {
   return { xp: data.xp || 0, streak: data.streak || 0, lastDate: data.last_session_date };
 }
 
-export async function awardXp(minutes: number) {
+export async function getXpFull() {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return;
+  if (!user) return { xp: 0, streak: 0, lastDate: null, sessions: 0, totalMinutes: 0, firstSession: null, lastSession: null };
 
-  const gained = Math.max(10, Math.round(minutes * 2));
-  const today = new Date().toISOString().slice(0, 10);
-
-  const { data: existing } = await supabase
+  const { data } = await supabase
     .from("user_xp")
-    .select("*")
+    .select("xp, streak, last_session_date, total_sessions, total_minutes, first_session_at, last_session_at")
     .eq("user_id", user.id)
     .maybeSingle();
 
-  if (!existing) {
-    await supabase.from("user_xp").insert({
-      user_id: user.id,
-      xp: gained,
-      streak: 1,
-      last_session_date: today,
-    });
-    return;
+  if (!data) {
+    await supabase.from("user_xp").insert({ user_id: user.id, xp: 0, streak: 0 });
+    return { xp: 0, streak: 0, lastDate: null, sessions: 0, totalMinutes: 0, firstSession: null, lastSession: null };
   }
 
-  const last = existing.last_session_date;
-  let streak = existing.streak || 0;
-
-  if (last === today) {
-    await supabase
-      .from("user_xp")
-      .update({ xp: (existing.xp || 0) + gained })
-      .eq("user_id", user.id);
-    return;
-  }
-
-  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-  if (last === yesterday) {
-    streak = (existing.streak || 0) + 1;
-  } else {
-    streak = 1;
-  }
-
-  await supabase
-    .from("user_xp")
-    .update({ xp: (existing.xp || 0) + gained, streak, last_session_date: today })
-    .eq("user_id", user.id);
+  return {
+    xp: data.xp || 0,
+    streak: data.streak || 0,
+    lastDate: data.last_session_date,
+    sessions: data.total_sessions || 0,
+    totalMinutes: data.total_minutes || 0,
+    firstSession: data.first_session_at,
+    lastSession: data.last_session_at,
+  };
 }

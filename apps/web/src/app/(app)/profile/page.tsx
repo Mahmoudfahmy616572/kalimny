@@ -1,13 +1,13 @@
 import { Suspense } from "react";
 
-import { getXp } from "@/lib/xp/actions";
+import { getXpFull } from "@/lib/xp/actions";
 
 export const metadata = {
   title: "بروفايلي | كلمني",
 };
 
 async function ProfileContent() {
-  const xp = await getXp();
+  const xp = await getXpFull();
 
   return (
     <div className="grid gap-4 sm:grid-cols-2">
@@ -18,6 +18,14 @@ async function ProfileContent() {
       <div className="rounded-organic border border-border bg-card p-6">
         <p className="text-sm text-muted">ستريك يومي</p>
         <p className="mt-2 text-3xl font-bold">{xp.streak} يوم</p>
+      </div>
+      <div className="rounded-organic border border-border bg-card p-6">
+        <p className="text-sm text-muted">عدد الجلسات</p>
+        <p className="mt-2 text-3xl font-bold">{xp.sessions}</p>
+      </div>
+      <div className="rounded-organic border border-border bg-card p-6">
+        <p className="text-sm text-muted">إجمالي الدقايق</p>
+        <p className="mt-2 text-3xl font-bold">{xp.totalMinutes}</p>
       </div>
     </div>
   );

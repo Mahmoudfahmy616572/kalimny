@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { StartPanel } from "@/components/start-panel";
 import { getCurrentUser } from "@/lib/auth";
 import { getLessonPlanContext, getUserPreferences } from "@/lib/preferences";
+import { StreakAlert } from "@/app/(app)/streak-alert";
 
 /**
  * الصفحة الرئيسية بتقرأ الجلسة والتفضيلات في كل طلب —
@@ -53,16 +54,21 @@ async function HomeLoader() {
   const unitIndex = planContext?.unitIndex ?? 0;
 
   return (
-    <StartPanel
-      defaultLanguage={prefs.language}
-      defaultLevel={prefs.level}
-      defaultPersonaId={prefs.personaId}
-      progress={{
-        level: prefs.level,
-        unitIndex,
-        unitCount: getUnitCount(prefs.level),
-        titleAr: getUnit(prefs.level, unitIndex).titleAr,
-      }}
-    />
+    <>
+      <Suspense fallback={null}>
+        <StreakAlert />
+      </Suspense>
+      <StartPanel
+        defaultLanguage={prefs.language}
+        defaultLevel={prefs.level}
+        defaultPersonaId={prefs.personaId}
+        progress={{
+          level: prefs.level,
+          unitIndex,
+          unitCount: getUnitCount(prefs.level),
+          titleAr: getUnit(prefs.level, unitIndex).titleAr,
+        }}
+      />
+    </>
   );
 }

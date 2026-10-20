@@ -488,7 +488,9 @@ export function SessionPanel({
       const scenarioLine = scenario
         ? `\n\n## SCENARIO (ROLEPLAY)\nAct as if you're in this real situation: ${scenario.titleAr}.\n${scenario.promptAr}\nKeep it natural, Egyptian Arabic friendly, teach ${persona.language.toUpperCase()} inside it.\nStay in this scenario unless learner clearly changes it.`
         : "";
-      const planWithRecap = recap || scenarioLine
+      const contextMsgs = [...turnsRef.current].slice(-6).map((t) => `${t.role === "user" ? "Learner" : "Tutor"}: ${t.text}`).join("\n");
+      const contextLine = contextMsgs ? `\n\n## RECENT CONTEXT\nKeep continuity with this recent conversation:\n${contextMsgs}` : "";
+      const planWithRecap = recap || scenarioLine || contextLine
         ? {
             ...(activeLessonPlan ?? {
               unit: getUnit(persona.level, activeUnitIndex),
@@ -501,6 +503,7 @@ export function SessionPanel({
               ...(activeLessonPlan?.recapWords ?? []),
               ...(recap ? [recap] : []),
               ...(scenarioLine ? [scenarioLine] : []),
+              ...(contextLine ? [contextLine] : []),
             ],
           }
         : activeLessonPlan;
