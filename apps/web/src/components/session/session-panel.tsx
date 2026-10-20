@@ -630,15 +630,15 @@ export function SessionPanel({
       : "مفيش رصيد متتبقّي";
 
   return (
-    <div className="flex h-[calc(100dvh-4rem)] flex-col gap-5 overflow-hidden px-4 py-6 lg:flex-row lg:gap-6 lg:px-6 lg:py-5">
-      <section className="flex min-h-0 w-full flex-1 flex-col items-center gap-4 overflow-hidden">
-      <header className="flex flex-col items-center gap-1 text-center">
-        <p className="text-sm text-muted">
+    <div className="flex h-[calc(100dvh-4rem)] flex-col gap-3 overflow-hidden px-4 py-3 lg:flex-row lg:gap-6 lg:px-6 lg:py-5">
+      <section className="flex w-full shrink-0 flex-col items-center gap-2 lg:min-h-0 lg:flex-1 lg:gap-4 lg:overflow-hidden">
+      <header className="flex flex-col items-center gap-0.5 text-center lg:gap-1">
+        <p className="text-xs text-muted lg:text-sm">
           {persona.emoji} {persona.name} · {persona.language.toUpperCase()} ·
           المستوى {persona.level}
         </p>
-        <h1 className="text-2xl font-bold">جلسة محادثة</h1>
-        <p className="text-sm text-muted">
+        <h1 className="text-lg font-bold lg:text-2xl">جلسة محادثة</h1>
+        <p className="text-xs text-muted lg:text-sm">
           {account.hasActivePlan ? (
             <>
               فاضل لك{" "}
@@ -675,7 +675,7 @@ export function SessionPanel({
 
       <div
         ref={avatarBoxRef}
-        className="relative flex w-full flex-1 items-center justify-center lg:min-h-0"
+        className="relative flex w-full items-center justify-center lg:min-h-0 lg:flex-1"
       >
         <Avatar
           personaId={persona.id}
@@ -831,7 +831,7 @@ export function SessionPanel({
       </div>
       </section>
 
-      <aside className="flex h-[40dvh] w-full shrink-0 flex-col overflow-hidden rounded-organic border border-border bg-card lg:h-full lg:w-[360px] lg:shrink-0">
+      <aside className="flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-organic border border-border bg-card lg:h-full lg:w-[360px] lg:flex-none lg:shrink-0">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <p className="text-sm font-semibold">
             {persona.emoji} {persona.name}

@@ -23,7 +23,7 @@ export function Avatar(props: AvatarProps) {
       aria-label={ORB_LABELS[props.state]}
       data-state={props.state}
     >
-      <div className="relative h-[clamp(210px,34dvh,340px)] w-full max-w-[340px]">
+      <div className="relative h-[clamp(150px,24dvh,240px)] w-full max-w-[240px] lg:h-[clamp(210px,34dvh,340px)] lg:max-w-[340px]">
         <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_50%_45%,rgba(201,111,74,0.18),transparent_66%)]" />
         <AvatarScene {...props} />
       </div>
