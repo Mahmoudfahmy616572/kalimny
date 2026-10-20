@@ -159,8 +159,10 @@ export async function POST(request: Request): Promise<NextResponse> {
     if (summaryStatus === "pending" && body.language) {
       const { sessionId, language, unitIndex, transcript, usedSeconds, lessonMinutes } =
         body;
+      const userId = user.id;
       after(async () => {
         await generateAndSaveSummary({
+          userId,
           sessionId,
           language,
           unitIndex,

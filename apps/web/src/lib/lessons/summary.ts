@@ -3,11 +3,10 @@ import "server-only";
 import {
   getUnit,
   type CurriculumUnit,
-  type LanguageCode,
+  type CefrLevel,
 } from "@kalimny/shared";
 
-import { getLessonPlanContext } from "@/lib/preferences";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
  * توليد ملخص الجلسة بـ Gemini Flash + حفظه في lesson_summaries.
@@ -198,6 +197,7 @@ async function callGemini(prompt: string): Promise<unknown> {
  * p_advance: بتتحسب من السيرفر — الجلسة اتصرفت ≥ 60% من وقتها.
  */
 export async function generateAndSaveSummary(options: {
+  userId: string;
   sessionId: string;
   language: string;
   unitIndex: number;
@@ -205,7 +205,7 @@ export async function generateAndSaveSummary(options: {
   usedSeconds: number;
   allocatedMinutes: number;
 }): Promise<LessonSummary | null> {
-  const { sessionId, language, unitIndex, transcript, usedSeconds, allocatedMinutes } =
+  const { userId, sessionId, language, unitIndex, transcript, usedSeconds, allocatedMinutes } =
     options;
 
   if (transcript.length === 0) {
@@ -226,13 +226,23 @@ export async function generateAndSaveSummary(options: {
     .join("\n")
     .slice(-MAX_TRANSCRIPT_CHARS);
 
+  // بنشتغل بعميل service_role لأن الدالة بتتنفّذ جوه after()، وسياق الطلب
+  // بيبقى اتقفل: cookies() مش متاحة وauth.uid() بترجع null. ده كان بيفشل
+  // حفظ الملخص قبل كده. الـ user_id اللي بنمرّره اتحقق منه في بداية الطلب.
+  const supabase = createAdminClient();
+
   // بنجيب خط الوحدة من المنهج عشان الملخص يشمل محتواها كامل —
   // حتى لو المدرّس والطالب ما اتكلموش في كل محاورها.
   let unit: CurriculumUnit | undefined;
   try {
-    const planContext = await getLessonPlanContext(language as LanguageCode);
-    if (planContext?.level) {
-      unit = getUnit(planContext.level, unitIndex);
+    const { data: rows } = await supabase.rpc(
+      "get_lesson_plan_context_for_user",
+      { p_user_id: userId, p_language: language },
+    );
+    const row = Array.isArray(rows) ? rows[0] : rows;
+    const level = (row?.level as CefrLevel | null) ?? null;
+    if (level) {
+      unit = getUnit(level, unitIndex);
     }
   } catch (error) {
     console.error(
@@ -253,8 +263,8 @@ export async function generateAndSaveSummary(options: {
     const allocatedSeconds = Math.max(1, allocatedMinutes * 60);
     const advance = usedSeconds >= allocatedSeconds * 0.6;
 
-    const supabase = await createClient();
-    const { error } = await supabase.rpc("save_lesson_summary", {
+    const { error } = await supabase.rpc("save_lesson_summary_for_user", {
+      p_user_id: userId,
       p_session_id: sessionId,
       p_language: language,
       p_unit_index: unitIndex,
