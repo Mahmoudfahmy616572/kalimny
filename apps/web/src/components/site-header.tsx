@@ -28,8 +28,9 @@ export async function SiteHeader() {
         {user ? (
           <>
             {xp && xp.streak > 0 ? (
-              <span className="hidden items-center gap-1 rounded-full border border-border px-3 py-1 text-xs font-semibold sm:flex">
-                🔥 {xp.streak}
+              <span className="hidden items-center gap-1.5 rounded-full border border-amber-200 bg-gradient-to-r from-orange-50 to-amber-50 px-3 py-1 text-xs font-semibold shadow-sm sm:flex">
+                <span>🔥</span>
+                <span>{xp.streak} يوم</span>
               </span>
             ) : null}
             <Link
