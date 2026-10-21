@@ -22,7 +22,9 @@ import { createAdminClient } from "@/lib/supabase/admin";
 const SUMMARY_MODEL = "gemini-3.8-flash";
 const SUMMARY_TIMEOUT_MS = 45_000;
 /** أقصى طول للنص المرسل — فوق كده بنبعت آخر جزء بس */
-const MAX_TRANSCRIPT_CHARS = 24_000;
+const MAX_TRANSCRIPT_CHARS = 16_000;
+/** سقف حجم الرد — بيقلّل زمن التوليد والتكلفة وبيمنع الردود الطايرة */
+const SUMMARY_MAX_OUTPUT_TOKENS = 2048;
 
 /**
  * نسبة اكتمال الجلسة: لازم توصل ٦٠٪ من وقتها المحجوز عشان تتعتبر
@@ -172,6 +174,7 @@ async function callGemini(prompt: string): Promise<unknown> {
         generationConfig: {
           temperature: 0.2,
           responseMimeType: "application/json",
+          maxOutputTokens: SUMMARY_MAX_OUTPUT_TOKENS,
         },
       }),
       cache: "no-store",
@@ -182,6 +185,60 @@ async function callGemini(prompt: string): Promise<unknown> {
   if (!response.ok) {
     const detail = await response.text();
     throw new Error(`summary generation failed (${response.status}): ${detail}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * الموديل أحيانًا بيرجّع JSON ناقص أو نص مش JSON خالص. بدل ما نحفظ ملخص
+ * فاضي ونتقدّم في المنهج من غير مادة، بنعمل محاولة إصلاح واحدة: بنبعت
+ * الرد الناقص وبنطلب JSON صحيح بس — بتكلفة call واحد بحد أقصى.
+ */
+async function callGeminiWithRepair(
+  prompt: string,
+  invalidRaw: string,
+): Promise<unknown> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY is not configured");
+  }
+
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${SUMMARY_MODEL}:generateContent`,
+    {
+      method: "POST",
+      headers: {
+        "x-goog-api-key": apiKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                text:
+                  `Your previous reply was not valid JSON in the required shape.\n` +
+                  `Rewrite it as valid JSON ONLY (no markdown, no commentary) with exactly this shape:\n` +
+                  `{"words":[{"term":"","meaning":"","example":""}],"phrases":[{"phrase":"","meaning":""}],"grammar":[{"point":"","explanation":"","example":""}]}\n\n` +
+                  `Previous reply:\n${invalidRaw.slice(0, 4000)}`,
+              },
+            ],
+          },
+        ],
+        generationConfig: {
+          temperature: 0.1,
+          responseMimeType: "application/json",
+          maxOutputTokens: SUMMARY_MAX_OUTPUT_TOKENS,
+        },
+      }),
+      cache: "no-store",
+      signal: AbortSignal.timeout(SUMMARY_TIMEOUT_MS),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(`summary repair failed (${response.status})`);
   }
 
   return response.json();
@@ -251,17 +308,46 @@ export async function generateAndSaveSummary(options: {
     );
   }
 
+  const prompt = buildPrompt(text, language, unit);
+
   try {
-    const data = await callGemini(buildPrompt(text, language, unit));
+    const data = await callGemini(prompt);
     const raw = pickText(data);
     if (!raw) {
       console.error("[lesson-summary] empty model response");
       return null;
     }
-    const summary = normalizeSummary(extractJson(raw));
+
+    let summary: LessonSummary;
+    try {
+      summary = normalizeSummary(extractJson(raw));
+    } catch {
+      // الرد مش JSON — محاولة إصلاح واحدة قبل ما نلخبط.
+      console.warn("[lesson-summary] invalid JSON — trying repair");
+      try {
+        const repaired = await callGeminiWithRepair(prompt, raw);
+        const repairedRaw = pickText(repaired);
+        if (!repairedRaw) {
+          throw new Error("empty repair response");
+        }
+        summary = normalizeSummary(extractJson(repairedRaw));
+      } catch (repairError) {
+        console.error(
+          "[lesson-summary] repair failed:",
+          repairError instanceof Error ? repairError.message : repairError,
+        );
+        return null;
+      }
+    }
+
+    // ملخص فاضي = مادة تعلّم مفيش. مش بنحفظه ومش بنقدّم الوحدة بيه.
+    if (summary.words.length === 0 && summary.phrases.length === 0) {
+      console.error("[lesson-summary] empty summary — not saving");
+      return null;
+    }
 
     const allocatedSeconds = Math.max(1, allocatedMinutes * 60);
-    const advance = usedSeconds >= allocatedSeconds * 0.6;
+    const advance = usedSeconds >= allocatedSeconds * SESSION_COMPLETE_RATIO;
 
     const { error } = await supabase.rpc("save_lesson_summary_for_user", {
       p_user_id: userId,

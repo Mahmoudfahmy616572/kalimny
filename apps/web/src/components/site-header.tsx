@@ -2,11 +2,17 @@ import Link from "next/link";
 
 import { signOutAction } from "@/app/(auth)/actions";
 import { getCurrentUser } from "@/lib/auth";
-import { getXp } from "@/lib/xp/actions";
+import { getXpForUser } from "@/lib/xp/read";
 
 export async function SiteHeader() {
   const user = await getCurrentUser();
-  const xp = user ? await getXp().catch(() => ({ xp: 0, streak: 0, lastDate: null })) : null;
+  const xp = user
+    ? await getXpForUser(user.id).catch(() => ({
+        xp: 0,
+        streak: 0,
+        lastDate: null,
+      }))
+    : null;
 
   return (
     <header className="flex w-full items-center justify-between gap-2 border-b border-border bg-card/70 px-4 py-3 backdrop-blur sm:gap-4 sm:px-6 sm:py-4">

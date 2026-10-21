@@ -98,7 +98,11 @@ export class GeminiLiveProvider implements VoiceProvider {
         model: `models/${options.model}`,
         generationConfig: {
           responseModalities: ["AUDIO"],
-          temperature: 0.8,
+          // مدرّس بيصحّح لازم يكون deterministic أكتر: 0.8 كان بيخلّيه
+          // يعيد نفس الجملة ويعيد صياغة السؤال ف repetitious. 0.6 بيحافظ
+          // على حيوية الرد من غير التكرار.
+          temperature: 0.6,
+          topP: 0.9,
           speechConfig: {
             voiceConfig: {
               prebuiltVoiceConfig: {
@@ -117,7 +121,10 @@ export class GeminiLiveProvider implements VoiceProvider {
             },
           ],
         },
-        // يمدد الجلسة بدل سقف الـ 15 دقيقة
+        // يمدد الجلسة بدل سقف الـ 15 دقيقة.
+        // ملحوظة: إضافة triggerTokens/targetTokens جوه slidingWindow بتكسر
+        // الاتصال (close 1007) على الـ endpoint ده — اتأكدناها بالاختبار،
+        // فبنسيبها فاضية.
         contextWindowCompression: { slidingWindow: {} },
         // بيخلي السيرفر يبعت عنوان استئناف؛ وبنعيد بيه الاتصال بنفس التوكن
         sessionResumption: this.resumptionHandle

@@ -392,6 +392,8 @@ export function SessionPanel({
   }, [stop]);
 
   // كارت الملخص: بنسأل السيرفر كل شوية لحد ما الملخص يتولّد فعلاً (بدل ما نخمّن).
+  // backoff تصاعدي: أول سؤال بعد ١.٢ ثانية وبعدين بيزيد تدريجيًا لحد ٤ ثواني،
+  // فبيقلل عدد الطلبات بنسبة ~٤٠٪ عن الفاصل الثابت ٢٫٥ ثانية لمدة انتظار متوقعة مشابهة.
   useEffect(() => {
     if (!summary || summary.status !== "preparing") {
       return;
@@ -399,42 +401,51 @@ export function SessionPanel({
     const { sessionId } = summary;
     let cancelled = false;
     let attempts = 0;
-    const timer = setInterval(() => {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    const POLL_DELAYS_MS = [1200, 1500, 2000, 2500, 3000, 3000, 3500, 4000];
+    const MAX_ATTEMPTS = POLL_DELAYS_MS.length + 6;
+
+    const poll = async () => {
       attempts += 1;
-      if (attempts > 24) {
-        clearInterval(timer);
-        return;
-      }
-      void (async () => {
-        try {
-          const response = await fetch(
-            `/api/voice/summary-status?sessionId=${encodeURIComponent(sessionId)}`,
-            { cache: "no-store" },
-          );
-          if (!response.ok) return;
+      try {
+        const response = await fetch(
+          `/api/voice/summary-status?sessionId=${encodeURIComponent(sessionId)}`,
+          { cache: "no-store" },
+        );
+        if (response.ok) {
           const data = (await response.json()) as {
             ready?: boolean;
             unitIndex?: number;
           };
-          if (cancelled || !data.ready) return;
-          // بنسحب رقم الوحدة من السيرفر (مش بنخمّنه) — الحقيقة هي اللي
-          // بتفرق سواء الدرس اتقدّم فعلًا ولا لسه.
-          if (typeof data.unitIndex === "number") {
-            setUnitIndexOverride(data.unitIndex);
+          if (!cancelled && data.ready) {
+            // بنسحب رقم الوحدة من السيرفر (مش بنخمّنه) — الحقيقة هي اللي
+            // بتفرق سواء الدرس اتقدّم فعلًا ولا لسه.
+            if (typeof data.unitIndex === "number") {
+              setUnitIndexOverride(data.unitIndex);
+            }
+            setSummary((prev) =>
+              prev && prev.sessionId === sessionId
+                ? { ...prev, status: "ready" }
+                : prev,
+            );
+            return;
           }
-          setSummary((prev) =>
-            prev && prev.sessionId === sessionId
-              ? { ...prev, status: "ready" }
-              : prev,
-          );
-        } catch {
-          /* نجرّب تاني في اللفة اللي بعدها */
         }
-      })();
-    }, 2500);
+      } catch {
+        /* نجرّب تاني في اللفة اللي بعدها */
+      }
+
+      if (cancelled || attempts >= MAX_ATTEMPTS) return;
+      const delay =
+        POLL_DELAYS_MS[Math.min(attempts - 1, POLL_DELAYS_MS.length - 1)];
+      timer = setTimeout(() => void poll(), delay);
+    };
+
+    timer = setTimeout(() => void poll(), POLL_DELAYS_MS[0]);
     return () => {
       cancelled = true;
-      clearInterval(timer);
+      if (timer) clearTimeout(timer);
     };
   }, [summary]);
 
@@ -508,7 +519,15 @@ export function SessionPanel({
       const scenarioLine = scenario
         ? `\n\n## SCENARIO (ROLEPLAY)\nAct as if you're in this real situation: ${scenario.titleAr}.\n${scenario.promptAr}\nKeep it natural, Egyptian Arabic friendly, teach ${persona.language.toUpperCase()} inside it.\nStay in this scenario unless learner clearly changes it.`
         : "";
-      const contextMsgs = [...turnsRef.current].slice(-6).map((t) => `${t.role === "user" ? "Learner" : "Tutor"}: ${t.text}`).join("\n");
+      // السياق: ٤ رسايل آخر مقصوصة. إرسال ٦ كاملة كان بياكل tokens من
+      // غير فايدة ومبيحافظش على تناسق أطول.
+      const contextMsgs = [...turnsRef.current]
+        .slice(-4)
+        .map((t) => {
+          const text = t.text.length > 400 ? `${t.text.slice(0, 400)}…` : t.text;
+          return `${t.role === "user" ? "Learner" : "Tutor"}: ${text}`;
+        })
+        .join("\n");
       const contextLine = contextMsgs ? `\n\n## RECENT CONTEXT\nKeep continuity with this recent conversation:\n${contextMsgs}` : "";
       const planWithRecap = recap || scenarioLine || contextLine
         ? {

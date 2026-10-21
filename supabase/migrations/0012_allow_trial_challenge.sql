@@ -72,7 +72,7 @@ begin
     end if;
     -- الدرس التجريبي استُهلك عند البدء — مفيش استرداد جزئي.
     update public.lesson_sessions
-       set status   = 'void',
+       set status   = 'abandoned',
            ended_at = now()
      where id = v_stale.id;
   end if;

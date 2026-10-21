@@ -8,6 +8,7 @@ import {
 } from "@kalimny/shared";
 
 import { createClient } from "@/lib/supabase/server";
+import type { LessonAccount } from "@/lib/lessons/quota";
 
 export type UserPreferences = {
   language: LanguageCode;
@@ -101,5 +102,56 @@ export async function getLessonPlanContext(
       ? (row.recap_words as string[]).filter((w): w is string => typeof w === "string")
       : [],
     personaId: (row.persona_id as string | null) ?? null,
+  };
+}
+
+/**
+ * سياق الجلسة + رصيد الدروس في نداء واحد.
+ * كنا بنعمل نداءين منفصلين (context + account) في كل فتح جلسة —
+ * دلوقتي نداء واحد، وبيوفّر round-trip كامل.
+ */
+export async function getSessionBootstrap(
+  language: LanguageCode,
+): Promise<{ context: LessonPlanContext | null; account: LessonAccount | null }> {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+  if (!data.user) {
+    return { context: null, account: null };
+  }
+
+  const { data: rows, error } = await supabase.rpc("get_session_bootstrap", {
+    p_language: language,
+  });
+
+  if (error) {
+    console.error("[bootstrap] get_session_bootstrap failed:", error.message);
+    return { context: null, account: null };
+  }
+
+  const row = Array.isArray(rows) ? rows[0] : rows;
+  if (!row) {
+    return { context: null, account: null };
+  }
+
+  return {
+    context: {
+      onboarded: Boolean(row.onboarded),
+      language: (row.language as LanguageCode) ?? language,
+      level: (row.level as CefrLevel | null) ?? null,
+      goal: (row.goal as GoalId | null) ?? null,
+      interests: (row.interests as string[]) ?? [],
+      dailyMinutes: (row.daily_minutes as number | null) ?? null,
+      unitIndex: (row.unit_index as number | null) ?? 0,
+      recapWords: Array.isArray(row.recap_words)
+        ? (row.recap_words as string[]).filter((w): w is string => typeof w === "string")
+        : [],
+      personaId: (row.persona_id as string | null) ?? null,
+    },
+    account: {
+      trialLessonsLeft: (row.trial_lessons_left as number | null) ?? 0,
+      paidMinutesLeft: (row.paid_minutes_left as number | null) ?? 0,
+      periodEnd: (row.paid_period_end as string | null) ?? null,
+      hasActivePlan: row.has_active_plan === true,
+    },
   };
 }

@@ -15,8 +15,12 @@ import { Suspense } from "react";
 
 import { SessionPanel } from "@/components/session/session-panel";
 import { requireUser } from "@/lib/auth";
-import { EMPTY_ACCOUNT, getLessonAccount } from "@/lib/lessons/quota";
-import { getLessonPlanContext, type LessonPlanContext } from "@/lib/preferences";
+import { EMPTY_ACCOUNT } from "@/lib/lessons/quota";
+import {
+  getLessonPlanContext,
+  getSessionBootstrap,
+  type LessonPlanContext,
+} from "@/lib/preferences";
 import { createClient } from "@/lib/supabase/server";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -82,9 +86,16 @@ async function SessionLoader({
   await requireUser();
 
   // مستخدم جديد لسه ما خلّصش onboarding → نحوّله.
-  let planContext = await getLessonPlanContext(language);
+  // نداء واحد بيجيب سياق الدرس + رصيد الدروس (بدل نداءين).
+  const bootstrap = await getSessionBootstrap(language);
+  let planContext = bootstrap.context;
+
   if (!planContext?.onboarded) {
-    redirect("/onboarding");
+    // fallback: لو الـ RPC الجديدة مش متطبّقة لسه، نرجع للطريقة القديمة.
+    planContext = await getLessonPlanContext(language);
+    if (!planContext?.onboarded) {
+      redirect("/onboarding");
+    }
   }
 
   // رابط الجلسة بمستوى مختلف عن المحفوظ (مستوى قديم محفوظ أو اتغير من
@@ -118,15 +129,7 @@ async function SessionLoader({
 
   // لو الـ migration لسه ما اتطبّقتش، منكسرش الصفحة — نعرض رصيد تجربة
   // افتراضي والتوثيق بيوضّح الخطوة الناقصة.
-  let account = EMPTY_ACCOUNT;
-  try {
-    account = await getLessonAccount();
-  } catch (error) {
-    console.error(
-      "[session] تعذّر قراءة رصيد الدروس — اتأكد إن supabase/migrations/0002_lesson_accounts.sql اتطبّق",
-      error instanceof Error ? error.message : error,
-    );
-  }
+  const account = bootstrap.account ?? EMPTY_ACCOUNT;
 
   const lessonPlan = buildLessonPlan(level, planContext);
 
