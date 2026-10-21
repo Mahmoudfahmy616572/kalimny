@@ -52,7 +52,7 @@ export function ProgressMap({
       <div
         role="img"
         aria-label={`تقدّمك: ${progressLabel}`}
-        className="flex w-full items-center gap-1.5"
+        className="flex w-full min-w-0 items-center gap-1 sm:gap-1.5"
       >
         {Array.from({ length: total }, (_, index) => {
           const isDone = index < current;
@@ -62,7 +62,7 @@ export function ProgressMap({
               {index > 0 ? (
                 <span
                   aria-hidden
-                  className={`h-0.5 flex-1 rounded-full ${
+                  className={`h-0.5 min-w-0 flex-1 rounded-full ${
                     index <= current ? "bg-sage" : "bg-border"
                   }`}
                 />

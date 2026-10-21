@@ -15,7 +15,6 @@ import { useState } from "react";
 
 import { ProgressMap } from "@/components/progress-map";
 import { saveHomePreferences } from "@/lib/preferences-actions";
-import { saveHomePreferences } from "@/lib/preferences-actions";
 
 type ProgressInfo = {
   level: CefrLevel;

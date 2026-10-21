@@ -52,16 +52,12 @@ const nextId = () => ++turnId;
 const MIN_DURATION = Math.min(...LESSON_DURATIONS_MINUTES);
 
 type SessionPanelProps = {
-  persona: PersonaSpec | null;
+  persona: PersonaSpec;
   initialAccount: LessonAccount;
   /** خطة الدرس الحالية (الوحدة + الهدف + الاهتمامات) — بتيجي من onboarding */
   lessonPlan?: LessonPlan;
   /** إجمالي وحدات المستوى — لخريطة التقدّم في الرأس */
   unitCount?: number;
-  /** وضع تحديد المستوى */
-  placementMode?: boolean;
-  /** لغة التقييم لو placementMode */
-  evaluatorLanguage?: LanguageCode;
 };
 
 /** رسالة الرفض حسب السبب الجاي من السيرفر — بتوجّه الطالب للإجراء الصح. */
@@ -83,8 +79,6 @@ export function SessionPanel({
   initialAccount,
   lessonPlan,
   unitCount,
-  placementMode = false,
-  evaluatorLanguage = "ar",
 }: SessionPanelProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [micOn, setMicOn] = useState(true);
@@ -152,9 +146,9 @@ export function SessionPanel({
     return {
       ...lessonPlan,
       unitIndex: activeUnitIndex,
-      unit: getUnit(effectivePersona.level, activeUnitIndex),
+      unit: getUnit(persona.level, activeUnitIndex),
     };
-  }, [lessonPlan, activeUnitIndex, effectivePersona.level]);
+  }, [lessonPlan, activeUnitIndex, persona.level]);
 
   // هل الطالب لسه في التجربة؟ (مفيش اشتراك نشط + فاضل دروس)
   const isTrial = !account.hasActivePlan && account.trialLessonsLeft > 0;
@@ -198,6 +192,13 @@ export function SessionPanel({
       const turn: Turn = { id: nextId(), role, text: trimmed, corrections };
       setTurns((prev) => [...prev, turn]);
       turnsRef.current = [...turnsRef.current, turn];
+      // بنبعت كل رسالة مكتوبة/منطوقة للخارج — الصفحة الخارجية (وضع تحديد
+      // المستوى) بتجمّعهم عشان تقيّم الترانسكريبت.
+      window.dispatchEvent(
+        new CustomEvent("kalimny:transcript", {
+          detail: { role: role === "user" ? "user" : "assistant", content: trimmed },
+        }),
+      );
       if (role === "user" && corrections && corrections.length > 0) {
         setCorrectionsByTurn((prev) => ({ ...prev, [turn.id]: corrections }));
       }

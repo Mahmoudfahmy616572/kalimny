@@ -49,13 +49,16 @@ export interface PersonaSpec {
   humor: boolean;
 }
 
+/** معرّف شخصية تقييم تحديد المستوى — مش بتظهر في قوائم الشخصيات العادية. */
+export const PLACEMENT_PERSONA_ID = "evaluator";
+
 /** كل الشخصيات على المنصّة — شخصيتان لكل لغة بصوتين مختلفين. */
 export const PERSONAS: Array<Omit<PersonaSpec, "level">> = [
   {
-    id: "evaluator",
+    id: PLACEMENT_PERSONA_ID,
     name: "مُقيّم كلمني",
     emoji: "🧮",
-    language: "ar",
+    language: "en",
     voice: "Charon",
     style: {
       energy: "calm",
@@ -238,10 +241,10 @@ export const PERSONAS_BY_LANGUAGE: Record<
   LanguageCode,
   Array<Omit<PersonaSpec, "level">>
 > = {
-  en: PERSONAS.filter((p) => p.language === "en"),
-  fr: PERSONAS.filter((p) => p.language === "fr"),
-  es: PERSONAS.filter((p) => p.language === "es"),
-  de: PERSONAS.filter((p) => p.language === "de"),
+  en: PERSONAS.filter((p) => p.language === "en" && p.id !== PLACEMENT_PERSONA_ID),
+  fr: PERSONAS.filter((p) => p.language === "fr" && p.id !== PLACEMENT_PERSONA_ID),
+  es: PERSONAS.filter((p) => p.language === "es" && p.id !== PLACEMENT_PERSONA_ID),
+  de: PERSONAS.filter((p) => p.language === "de" && p.id !== PLACEMENT_PERSONA_ID),
 };
 
 /** الشخصية الافتراضية لكل لغة (أول شخصية في القائمة). */

@@ -1,16 +1,20 @@
 import { NextResponse } from "next/server";
-import { GoogleGenAI } from "@google/genai";
 
 import { requireUser } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
 import { saveHomePreferences } from "@/lib/preferences-actions";
+import { createClient } from "@/lib/supabase/server";
 
 const CEFR_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
 type CefrLevel = (typeof CEFR_LEVELS)[number];
 
+const PLACEMENT_MODEL = "gemini-3.8-flash";
+const PLACEMENT_TIMEOUT_MS = 30_000;
+
 function pickLevel(v: unknown): CefrLevel | null {
   if (typeof v !== "string") return null;
-  return (CEFR_LEVELS as readonly string[]).includes(v) ? (v as CefrLevel) : null;
+  return (CEFR_LEVELS as readonly string[]).includes(v)
+    ? (v as CefrLevel)
+    : null;
 }
 
 export async function POST(req: Request) {
@@ -25,7 +29,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "empty" }, { status: 400 });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return NextResponse.json({ error: "missing_key" }, { status: 500 });
     }
@@ -33,14 +37,14 @@ export async function POST(req: Request) {
     const transcript = messages
       .slice(-40)
       .map((m) => {
-        const role = (m as any)?.role === "assistant" ? "مُقيّم" : "متعلم";
-        const content = String((m as any)?.content ?? "").trim();
+        const role =
+          (m as { role?: unknown })?.role === "assistant" ? "مُقيّم" : "متعلم";
+        const content = String((m as { content?: unknown })?.content ?? "").trim();
         return content ? `${role}: ${content}` : null;
       })
       .filter(Boolean)
       .join("\n");
 
-    const ai = new GoogleGenAI({ apiKey });
     const system = `أنت مقيّم CEFR دقيق جداً.
 قيم مستوى المتعلم بناءً على الترانسكريبت ده فقط.
 ركز على: الطلاقة، النطاق النحوى، الدقة، المفردات، وقدرته على إنتاج جمل كاملة.
@@ -55,23 +59,40 @@ export async function POST(req: Request) {
 - خليك محافظًا أحسن بكتير من المبالغة
 - ركّز على "إنتاج" اللغة مش مجرد فهم`;
 
-    const resp = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: `${system}\n\nترانسكريبت:\n${transcript}` }],
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${PLACEMENT_MODEL}:generateContent`,
+      {
+        method: "POST",
+        headers: {
+          "x-goog-api-key": apiKey,
+          "Content-Type": "application/json",
         },
-      ],
-      config: {
-        temperature: 0.2,
-        maxOutputTokens: 256,
-        responseMimeType: "application/json",
+        body: JSON.stringify({
+          contents: [
+            { parts: [{ text: `${system}\n\nترانسكريبت:\n${transcript}` }] },
+          ],
+          generationConfig: {
+            temperature: 0.2,
+            maxOutputTokens: 256,
+            responseMimeType: "application/json",
+          },
+        }),
+        cache: "no-store",
+        signal: AbortSignal.timeout(PLACEMENT_TIMEOUT_MS),
       },
-    });
+    );
 
-    const text = resp.text?.trim() ?? "";
-    let parsed: any = null;
+    if (!response.ok) {
+      const detail = await response.text();
+      throw new Error(`placement generation failed (${response.status}): ${detail}`);
+    }
+
+    const json = (await response.json()) as {
+      candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+    };
+    const text = json.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";
+
+    let parsed: unknown = null;
     try {
       parsed = JSON.parse(text);
     } catch {
@@ -79,9 +100,11 @@ export async function POST(req: Request) {
       if (m) parsed = JSON.parse(m[0]);
     }
 
-    const level = pickLevel(parsed?.level);
+    const level = pickLevel((parsed as { level?: unknown } | null)?.level);
     const confidence =
-      typeof parsed?.confidence === "number" ? parsed.confidence : 0;
+      typeof (parsed as { confidence?: unknown } | null)?.confidence === "number"
+        ? ((parsed as { confidence: number }).confidence)
+        : 0;
     if (!level) {
       return NextResponse.json({ error: "bad_result" }, { status: 500 });
     }
@@ -101,17 +124,24 @@ export async function POST(req: Request) {
         { onConflict: "user_id" },
       );
 
-    const lang = body?.language === "en" ? "en" : "ar";
+    const rawLang = body?.language;
+    const lang = (["en", "fr", "es", "de"] as const).find((c) => c === rawLang);
+    if (!lang) {
+      return NextResponse.json({ error: "invalid_language" }, { status: 400 });
+    }
     await saveHomePreferences({ level, language: lang });
 
     return NextResponse.json({
       level,
       confidence,
-      reason: typeof parsed?.reason === "string" ? parsed.reason : "",
+      reason:
+        typeof (parsed as { reason?: unknown } | null)?.reason === "string"
+          ? ((parsed as { reason: string }).reason)
+          : "",
     });
-  } catch (e: any) {
+  } catch (e) {
     return NextResponse.json(
-      { error: e?.message ?? "unknown" },
+      { error: e instanceof Error ? e.message : "unknown" },
       { status: 500 },
     );
   }

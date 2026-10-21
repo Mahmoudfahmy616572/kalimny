@@ -1,12 +1,21 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  getPersonaById,
+  getPersona,
+  getUnit,
+  PLACEMENT_PERSONA_ID,
+  type CefrLevel,
+  type LanguageCode,
+  type LessonPlan,
+} from "@kalimny/shared";
 import { useRouter } from "next/navigation";
-import type { CefrLevel, LanguageCode } from "@kalimny/shared";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { SessionPanel } from "@/components/session/session-panel";
 import type { LessonAccount } from "@/lib/lessons/quota";
-import type { LessonPlan } from "@kalimny/shared";
+
+type TranscriptMessage = { role: "user" | "assistant"; content: string };
 
 type Props = {
   language: LanguageCode;
@@ -17,9 +26,7 @@ type Props = {
 export function PlacementClient({ language, level, account }: Props) {
   const router = useRouter();
   const [done, setDone] = useState(false);
-  const [messages, setMessages] = useState<
-    Array<{ role: "user" | "assistant"; content: string }>
-  >([]);
+  const [messages, setMessages] = useState<TranscriptMessage[]>([]);
   const [result, setResult] = useState<{
     level: CefrLevel;
     confidence: number;
@@ -28,33 +35,29 @@ export function PlacementClient({ language, level, account }: Props) {
   const [loading, setLoading] = useState(false);
   const startedAt = useRef(Date.now());
 
+  const persona = useMemo(() => {
+    const evaluator = getPersonaById(PLACEMENT_PERSONA_ID, level);
+    return evaluator ? { ...evaluator, language } : getPersona(language, level);
+  }, [language, level]);
+
   const lessonPlan = useMemo<LessonPlan>(
     () => ({
-      unit: {
-        id: "placement",
-        titleAr: "تحديد المستوى",
-        titleEn: "Placement",
-        objectiveAr: "نتكلم شوية عشان نحدد أنسب مستوى",
-        objectiveEn: "A short conversation to find your level",
-        tasks: [],
-        vocab: [],
-      },
+      unit: getUnit(level, 0),
       goal: null,
       interests: [],
       recapWords: [],
       unitIndex: 0,
     }),
-    [],
+    [level],
   );
 
   useEffect(() => {
     const handler = (e: Event) => {
-      const detail = (e as CustomEvent).detail as
-        | { role: "user" | "assistant"; content: string }
-        | undefined;
+      const detail = (e as CustomEvent<TranscriptMessage | undefined>).detail;
       if (!detail?.content) return;
       setMessages((prev) => {
-        if (prev.length > 0 && prev[prev.length - 1].content === detail.content && prev[prev.length - 1].role === detail.role) {
+        const last = prev[prev.length - 1];
+        if (last && last.role === detail.role && last.content === detail.content) {
           return prev;
         }
         return [...prev, { role: detail.role, content: detail.content }];
@@ -75,7 +78,11 @@ export function PlacementClient({ language, level, account }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages, language }),
       });
-      const json = await res.json();
+      const json = (await res.json()) as {
+        level?: CefrLevel;
+        confidence?: number;
+        reason?: string;
+      };
       if (json?.level) {
         setResult({
           level: json.level,
@@ -101,7 +108,7 @@ export function PlacementClient({ language, level, account }: Props) {
     return () => clearInterval(t);
   }, [done, evaluate]);
 
-  const accept = async () => {
+  const accept = () => {
     router.push("/");
     router.refresh();
   };
@@ -113,12 +120,10 @@ export function PlacementClient({ language, level, account }: Props) {
   return (
     <div className="relative min-h-screen">
       <SessionPanel
-        persona={null as any}
+        persona={persona}
         initialAccount={account}
         lessonPlan={lessonPlan}
         unitCount={1}
-        placementMode
-        evaluatorLanguage={language}
       />
       {!done && messages.length >= 4 && Date.now() - startedAt.current >= 45000 ? (
         <button
