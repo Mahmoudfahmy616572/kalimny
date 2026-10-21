@@ -15,6 +15,7 @@ import { useState } from "react";
 
 import { ProgressMap } from "@/components/progress-map";
 import { saveHomePreferences } from "@/lib/preferences-actions";
+import { saveHomePreferences } from "@/lib/preferences-actions";
 
 type ProgressInfo = {
   level: CefrLevel;
@@ -53,16 +54,16 @@ export function StartPanel({
 
   // حفظ الاختيار في الحساب — من غير كده خريطة التقدّم بتفضل عالقة
   // بالمستوى القديم والصفحة بتقرأه من السيرفر كل مرة.
-  const chooseLevel = (next: CefrLevel) => {
+  const chooseLevel = async (next: CefrLevel) => {
     setLevel(next);
-    void saveHomePreferences({ level: next }).then(() => router.refresh());
+    await saveHomePreferences({ level: next, language });
+    router.refresh();
   };
 
-  const chooseLanguage = (next: LanguageCode) => {
+  const chooseLanguage = async (next: LanguageCode) => {
     setLanguage(next);
-    void saveHomePreferences({ level, language: next }).then(() =>
-      router.refresh(),
-    );
+    await saveHomePreferences({ level, language: next });
+    router.refresh();
   };
 
   const personas = PERSONAS_BY_LANGUAGE[language];

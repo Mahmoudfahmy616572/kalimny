@@ -125,6 +125,12 @@ export function OnboardingForm() {
                 </button>
               ))}
             </div>
+            <a
+              href={`/onboarding/placement?lang=${language}`}
+              className="text-sm font-semibold text-terracotta underline-offset-4 hover:underline"
+            >
+              مش عارف مستواى؟ خلينا نتكلم شوية نحدد لك الأنسب
+            </a>
           </div>
         </section>
       )}

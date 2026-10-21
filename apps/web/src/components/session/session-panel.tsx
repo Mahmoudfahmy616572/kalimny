@@ -10,6 +10,7 @@ import {
   TRIAL_LESSON_MINUTES,
   getUnit,
   getScenario,
+  getPersonaById,
   type LanguageCode,
   type LessonDurationMinutes,
   type LessonPlan,
@@ -51,12 +52,16 @@ const nextId = () => ++turnId;
 const MIN_DURATION = Math.min(...LESSON_DURATIONS_MINUTES);
 
 type SessionPanelProps = {
-  persona: PersonaSpec;
+  persona: PersonaSpec | null;
   initialAccount: LessonAccount;
   /** خطة الدرس الحالية (الوحدة + الهدف + الاهتمامات) — بتيجي من onboarding */
   lessonPlan?: LessonPlan;
   /** إجمالي وحدات المستوى — لخريطة التقدّم في الرأس */
   unitCount?: number;
+  /** وضع تحديد المستوى */
+  placementMode?: boolean;
+  /** لغة التقييم لو placementMode */
+  evaluatorLanguage?: LanguageCode;
 };
 
 /** رسالة الرفض حسب السبب الجاي من السيرفر — بتوجّه الطالب للإجراء الصح. */
@@ -78,6 +83,8 @@ export function SessionPanel({
   initialAccount,
   lessonPlan,
   unitCount,
+  placementMode = false,
+  evaluatorLanguage = "ar",
 }: SessionPanelProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [micOn, setMicOn] = useState(true);
@@ -145,9 +152,9 @@ export function SessionPanel({
     return {
       ...lessonPlan,
       unitIndex: activeUnitIndex,
-      unit: getUnit(persona.level, activeUnitIndex),
+      unit: getUnit(effectivePersona.level, activeUnitIndex),
     };
-  }, [lessonPlan, activeUnitIndex, persona.level]);
+  }, [lessonPlan, activeUnitIndex, effectivePersona.level]);
 
   // هل الطالب لسه في التجربة؟ (مفيش اشتراك نشط + فاضل دروس)
   const isTrial = !account.hasActivePlan && account.trialLessonsLeft > 0;
