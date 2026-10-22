@@ -65,8 +65,8 @@ async function HomeLoader() {
         progress={{
           level: prefs.level,
           unitIndex,
-          unitCount: getUnitCount(prefs.level),
-          titleAr: getUnit(prefs.level, unitIndex).titleAr,
+          unitCount: getUnitCount(prefs.language, prefs.level),
+          titleAr: getUnit(prefs.language, prefs.level, unitIndex).titleAr,
         }}
       />
     </>

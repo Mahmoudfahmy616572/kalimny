@@ -42,13 +42,13 @@ export function PlacementClient({ language, level, account }: Props) {
 
   const lessonPlan = useMemo<LessonPlan>(
     () => ({
-      unit: getUnit(level, 0),
+      unit: getUnit(language, level, 0),
       goal: null,
       interests: [],
       recapWords: [],
       unitIndex: 0,
     }),
-    [level],
+    [language, level],
   );
 
   useEffect(() => {
@@ -123,7 +123,6 @@ export function PlacementClient({ language, level, account }: Props) {
         persona={persona}
         initialAccount={account}
         lessonPlan={lessonPlan}
-        unitCount={1}
       />
       {!done && messages.length >= 4 && Date.now() - startedAt.current >= 45000 ? (
         <button

@@ -4,6 +4,7 @@ import {
   getUnit,
   type CurriculumUnit,
   type CefrLevel,
+  type LanguageCode,
 } from "@kalimny/shared";
 
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -61,14 +62,22 @@ function buildPrompt(
 ): string {
   const unitLines: string[] = [];
   if (unit) {
+    const grammar = unit.coreGrammar?.length
+      ? unit.coreGrammar.join(" | ")
+      : unit.grammarAr;
     unitLines.push(
       `## This lesson's unit (from the curriculum — this defines what the lesson covers)`,
       `- Title (Arabic): ${unit.titleAr}`,
-      `- Grammar focus (Arabic): ${unit.grammarAr}`,
+      `- Grammar focus: ${grammar}`,
       `- Vocabulary themes (Arabic): ${(unit.vocabThemes ?? []).join(" / ")}`,
-      `- Example phrases in Arabic for reference: ${(unit.samplePhrases ?? []).join(" / ")}`,
+      unit.coreVocab?.length
+        ? `- Core vocabulary (${targetLanguage} with Egyptian Arabic meaning): ${unit.coreVocab.join(" / ")}`
+        : "",
+      unit.samplePhrases?.length
+        ? `- Example phrases (${targetLanguage} with Egyptian Arabic meaning): ${unit.samplePhrases.join(" / ")}`
+        : "",
       ``,
-      `IMPORTANT: The summary must cover the UNIT's full content. Generate ${targetLanguage} words, phrases, and the grammar point for ALL the vocabulary themes above — even themes that were NOT discussed in the transcript. The transcript shows what was actually practiced; the unit outline defines what the learner is expected to learn in this lesson.`,
+      `IMPORTANT: The summary must cover the UNIT's full content. Start from the core vocabulary and phrases above, and add anything else that was actually taught or practised in the transcript. The transcript shows what was actually practised; the unit outline defines what the learner is expected to learn in this lesson.`,
       ``,
     );
   }
@@ -299,7 +308,7 @@ export async function generateAndSaveSummary(options: {
     const row = Array.isArray(rows) ? rows[0] : rows;
     const level = (row?.level as CefrLevel | null) ?? null;
     if (level) {
-      unit = getUnit(level, unitIndex);
+      unit = getUnit(language as LanguageCode, level, unitIndex);
     }
   } catch (error) {
     console.error(

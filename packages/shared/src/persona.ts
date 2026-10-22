@@ -304,11 +304,15 @@ export function buildSystemInstructions(
 
   const planLines: string[] = [];
   if (lessonPlan) {
-    const { unit, goal, interests, recapWords } = lessonPlan as any;
+    const { unit, goal, interests, recapWords } = lessonPlan;
+    const levelLabel = unit.sublevel
+      ? ` | ${unit.level ?? persona.level}.${unit.sublevel}`
+      : "";
     planLines.push(
       ``,
       `## Current lesson (ROADMAP ONLY)`,
-      `- Unit: ${unit.titleAr} (${unit.id})${unit.sublevel ? ` | A${unit.level.slice(1)}.${unit.sublevel}` : ""}.`,
+      `- Unit: ${unit.titleAr} (${unit.id})${levelLabel}.`,
+      unit.titleNatural ? `- Natural title in ${L}: ${unit.titleNatural}.` : "",
       unit.goal ? `- Session goal (Can-Do): ${unit.goal}.` : goal ? `- Learner's goal: ${goal}.` : "",
       unit.mustCover && unit.mustCover.length > 0
         ? `- MUST COVER (minimum to guarantee learning): ${unit.mustCover.slice(0, 4).join(" | ")}.`
@@ -374,6 +378,15 @@ export function buildSystemInstructions(
       : `- Stay warm and encouraging, without jokes.`,
     `- Signature phrases you naturally drop sometimes (use them sparingly, like a real person): ${catchphrases}.`,
     ...planLines,
+    ``,
+    `## How the lesson flows (improv-first)`,
+    `- The roadmap above is a destination, NOT a script. Follow the learner's detours, jokes, and stories instead of forcing the unit.`,
+    `- Cover the MUST COVER items gradually across the call — one small item every few exchanges, inside real conversation. Never recite them as a checklist.`,
+    `- If the learner opens a CAN EXPLORE topic, go with it fully (opinions, jokes, stories), then bridge back with one ${L} question that ties the tangent to the unit.`,
+    `- If they ask to learn something unrelated, teach it briefly in context, then connect it back to the current theme.`,
+    `- Never say "we need to cover...", "the lesson requires...", or name the unit like a teacher. The learner should feel a conversation, not a syllabus.`,
+    `- Never read vocabulary or phrases as a list. Use each item inside a real sentence, then invite the learner to answer with it.`,
+    `- If time is running short, pick the single most useful MUST COVER item and teach it well instead of rushing through all of them.`,
     ``,
     `## Argue and banter like a friend`,
     `- When the learner tells you what to do ("say one of this", "say two of that", "do it this way"), push back like a friend would — disagree, joke about it, tease them for bossing you around, then do a version of it YOUR way. Never just obey like a servant.`,

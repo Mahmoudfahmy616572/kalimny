@@ -1,4 +1,5 @@
-import type { CefrLevel } from "./languages";
+import type { CefrLevel, LanguageCode } from "./languages";
+import { getSyllabusUnits, toCurriculumUnit } from "./syllabus";
 
 /**
  * المنهج: وحدات خطية لكل مستوى. كل وحدة = جلسة واحدة.
@@ -492,16 +493,34 @@ const CURRICULUM: Record<CefrLevel, CurriculumUnit[]> = {
   C2: C2_UNITS,
 };
 
-/** عدد الوحدات المتاحة في مستوى معين (= عدد الجلسات المتسلسلة). */
-export function getUnitCount(level: CefrLevel): number {
-  return CURRICULUM[level].length;
+/**
+ * عدد الوحدات المتاحة في مستوى معين (= عدد الجلسات المتسلسلة).
+ * لو فيه منهج مكتوب للغة/المستوى ده نستخدم عدده، غير كده عدد الـspine.
+ */
+export function getUnitCount(language: LanguageCode, level: CefrLevel): number {
+  const authored = getSyllabusUnits(language, level);
+  return authored && authored.length > 0
+    ? authored.length
+    : CURRICULUM[level].length;
 }
 
 /**
  * بتجيب وحدة برقمها — لو الرقم أكبر من المتاح بترجّع الأخيرة
  * (المستوى ماخلصش بس المنهج خلص → يكمل نقاش حر في نفس المستوى).
+ *
+ * الأولوية للمنهج المكتوب الخاص باللغة، وبعدين الـspine المشترك.
  */
-export function getUnit(level: CefrLevel, index: number): CurriculumUnit {
+export function getUnit(
+  language: LanguageCode,
+  level: CefrLevel,
+  index: number,
+): CurriculumUnit {
+  const authored = getSyllabusUnits(language, level);
+  if (authored && authored.length > 0) {
+    const safe = Math.max(0, Math.min(index, authored.length - 1));
+    return toCurriculumUnit(authored[safe]);
+  }
+
   const units = CURRICULUM[level];
   const safe = Math.max(0, Math.min(index, units.length - 1));
   return units[safe];

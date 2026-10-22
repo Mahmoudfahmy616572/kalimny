@@ -3,7 +3,6 @@ import {
   getPersona,
   getPersonaById,
   getUnit,
-  getUnitCount,
   type CefrLevel,
   type LanguageCode,
   type LessonPlan,
@@ -131,14 +130,13 @@ async function SessionLoader({
   // افتراضي والتوثيق بيوضّح الخطوة الناقصة.
   const account = bootstrap.account ?? EMPTY_ACCOUNT;
 
-  const lessonPlan = buildLessonPlan(level, planContext);
+  const lessonPlan = buildLessonPlan(language, level, planContext);
 
   return (
     <SessionPanel
       persona={persona}
       initialAccount={account}
       lessonPlan={lessonPlan}
-      unitCount={getUnitCount(level)}
     />
   );
 }
@@ -148,12 +146,13 @@ async function SessionLoader({
  * عشان تتبعت للمدرّس في بداية الجلسة.
  */
 function buildLessonPlan(
+  language: LanguageCode,
   level: CefrLevel,
   context: LessonPlanContext | null,
 ): LessonPlan {
   const unitIndex = context?.unitIndex ?? 0;
   return {
-    unit: getUnit(level, unitIndex),
+    unit: getUnit(language, level, unitIndex),
     goal: context?.goal ?? null,
     interests: context?.interests ?? [],
     recapWords: context?.recapWords ?? [],

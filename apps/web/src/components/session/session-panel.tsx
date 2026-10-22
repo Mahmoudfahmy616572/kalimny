@@ -21,7 +21,6 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { ProgressMap } from "@/components/progress-map";
 import type { LessonAccount } from "@/lib/lessons/quota";
 import {
   PcmPlayer,
@@ -56,8 +55,6 @@ type SessionPanelProps = {
   initialAccount: LessonAccount;
   /** خطة الدرس الحالية (الوحدة + الهدف + الاهتمامات) — بتيجي من onboarding */
   lessonPlan?: LessonPlan;
-  /** إجمالي وحدات المستوى — لخريطة التقدّم في الرأس */
-  unitCount?: number;
 };
 
 /** رسالة الرفض حسب السبب الجاي من السيرفر — بتوجّه الطالب للإجراء الصح. */
@@ -78,7 +75,6 @@ export function SessionPanel({
   persona,
   initialAccount,
   lessonPlan,
-  unitCount,
 }: SessionPanelProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [micOn, setMicOn] = useState(true);
@@ -148,9 +144,9 @@ export function SessionPanel({
     return {
       ...lessonPlan,
       unitIndex: activeUnitIndex,
-      unit: getUnit(persona.level, activeUnitIndex),
+      unit: getUnit(persona.language, persona.level, activeUnitIndex),
     };
-  }, [lessonPlan, activeUnitIndex, persona.level]);
+  }, [lessonPlan, activeUnitIndex, persona.language, persona.level]);
 
   // هل الطالب لسه في التجربة؟ (مفيش اشتراك نشط + فاضل دروس)
   const isTrial = !account.hasActivePlan && account.trialLessonsLeft > 0;
@@ -536,7 +532,7 @@ export function SessionPanel({
       const contextLine = contextMsgs ? `\n\n## RECENT CONTEXT\nKeep continuity with this recent conversation:\n${contextMsgs}` : "";
       const planWithRecap = {
         ...(activeLessonPlan ?? {
-          unit: getUnit(persona.level, activeUnitIndex),
+          unit: getUnit(persona.language, persona.level, activeUnitIndex),
           goal: null,
           interests: [],
           recapWords: [],
@@ -792,15 +788,20 @@ export function SessionPanel({
   const clock = (seconds: number) =>
     `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 
+  // مستوى الوحدة الحالية (A1.1 / A1.2) لو المنهج محدّده.
+  const levelLabel = activeLessonPlan?.unit.sublevel
+    ? `${activeLessonPlan.unit.level ?? persona.level}.${activeLessonPlan.unit.sublevel}`
+    : persona.level;
+
   return (
     <div className="flex h-[calc(100dvh-4rem)] flex-col gap-3 overflow-hidden px-3 py-3 lg:flex-row lg:gap-6 lg:px-6 lg:py-5">
       <section className="flex min-h-0 w-full max-h-[36dvh] flex-col items-center gap-1 overflow-hidden lg:max-h-none lg:flex-1 lg:gap-4">
       <header className="flex w-full flex-col items-center gap-0.5 text-center lg:gap-1">
         <p className="hidden text-sm text-muted lg:block">
           {persona.emoji} {persona.name} · {persona.language.toUpperCase()} ·
-          المستوى {persona.level}
+          المستوى {levelLabel} · {effectiveLessonMinutes} دقيقة
         </p>
-        <h1 className="hidden text-2xl font-bold lg:block">جلسة محادثة</h1>
+        <h1 className="hidden text-2xl font-bold lg:block">محادثة طبيعية</h1>
         <p className="hidden text-sm text-muted lg:block">
           {account.hasActivePlan ? (
             <>
@@ -841,7 +842,7 @@ export function SessionPanel({
 
       <div className="flex w-full items-center justify-between gap-2 lg:hidden">
         <p className="min-w-0 truncate text-xs text-muted">
-          {persona.emoji} {persona.name} · {persona.level}
+          {persona.emoji} {persona.name} · {levelLabel}
         </p>
         <span className="shrink-0 rounded-full bg-cream px-2.5 py-1 text-[11px] font-semibold text-muted">
           {account.hasActivePlan
@@ -851,18 +852,6 @@ export function SessionPanel({
               : balanceLabel}
         </span>
       </div>
-
-      {unitCount ? (
-        <div className="mx-auto hidden w-full max-w-md lg:block">
-          <ProgressMap
-            level={persona.level}
-            unitIndex={activeUnitIndex}
-            unitCount={unitCount}
-            titleAr={activeLessonPlan?.unit.titleAr}
-            compact
-          />
-        </div>
-      ) : null}
 
       <div
         ref={avatarBoxRef}
