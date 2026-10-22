@@ -7,10 +7,10 @@ import {
   PCM_OUTPUT_RATE,
   PLAN_MONTHLY_MINUTES,
   PLAN_MONTHLY_PRICE_EGP,
+  QUICK_CHALLENGE_MINUTES,
   TRIAL_LESSON_MINUTES,
   getUnit,
   getScenario,
-  getPersonaById,
   type LanguageCode,
   type LessonDurationMinutes,
   type LessonPlan,
@@ -136,6 +136,8 @@ export function SessionPanel({
     unitIndex: number;
     lessonMinutes: number;
   } | null>(null);
+  // بيمنع إنهاء الجلسة أكتر من مرة لما التايمر يعدّي الحد.
+  const autoEndedRef = useRef(false);
 
   // الوحدة الفعلية اللي بنشتغل عليها دلوقتي (بتحوّل بعد ما الجلسة تتقدّم).
   const activeUnitIndex = unitIndexOverride ?? lessonPlan?.unitIndex ?? 0;
@@ -166,8 +168,8 @@ export function SessionPanel({
 
   // المدة الفعلية مشتقة من الرصيد — من غير مزامنة state في effect.
   const requestedMinutes = minutesParam ? parseInt(minutesParam) : null;
-  const effectiveLessonMinutes: LessonDurationMinutes = (requestedMinutes === 5
-    ? (5 as LessonDurationMinutes)
+  const effectiveLessonMinutes: LessonDurationMinutes = (requestedMinutes === QUICK_CHALLENGE_MINUTES
+    ? QUICK_CHALLENGE_MINUTES
     : account.hasActivePlan
       ? allowedDurations.includes(lessonMinutes)
         ? lessonMinutes
@@ -220,7 +222,7 @@ export function SessionPanel({
           else if (event.status === "live") {
             setPhase("live");
             setWaveKey((key) => key + 1);
-            if (!sessionStartedAt) setSessionStartedAt(Date.now());
+            setSessionStartedAt((prev) => prev ?? Date.now());
           } else if (event.status === "idle") setPhase("idle");
           else if (event.status === "ended") {
             // الموديل قفل الجلسة (خلص وقتها) — نسوّي الرصيد ونعرض الملخص.
@@ -385,6 +387,8 @@ export function SessionPanel({
     setLiveTutor("");
     setIsSpeaking(false);
     setPhase("idle");
+    setSessionStartedAt(null);
+    setElapsed(0);
   }, [settle]);
 
   useEffect(() => {
@@ -461,6 +465,7 @@ export function SessionPanel({
   const start = useCallback(async () => {
     setError(null);
     setSummary(null);
+    autoEndedRef.current = false;
     setPhase("connecting");
 
     let provider: GeminiLiveProvider | null = null;
@@ -529,23 +534,22 @@ export function SessionPanel({
         })
         .join("\n");
       const contextLine = contextMsgs ? `\n\n## RECENT CONTEXT\nKeep continuity with this recent conversation:\n${contextMsgs}` : "";
-      const planWithRecap = recap || scenarioLine || contextLine
-        ? {
-            ...(activeLessonPlan ?? {
-              unit: getUnit(persona.level, activeUnitIndex),
-              goal: null,
-              interests: [],
-              recapWords: [],
-              unitIndex: activeUnitIndex,
-            }),
-            recapWords: [
-              ...(activeLessonPlan?.recapWords ?? []),
-              ...(recap ? [recap] : []),
-              ...(scenarioLine ? [scenarioLine] : []),
-              ...(contextLine ? [contextLine] : []),
-            ],
-          }
-        : activeLessonPlan;
+      const planWithRecap = {
+        ...(activeLessonPlan ?? {
+          unit: getUnit(persona.level, activeUnitIndex),
+          goal: null,
+          interests: [],
+          recapWords: [],
+          unitIndex: activeUnitIndex,
+        }),
+        durationMinutes: effectiveLessonMinutes,
+        recapWords: [
+          ...(activeLessonPlan?.recapWords ?? []),
+          ...(recap ? [recap] : []),
+          ...(scenarioLine ? [scenarioLine] : []),
+          ...(contextLine ? [contextLine] : []),
+        ],
+      };
       await provider.connect({
         persona,
         token: data.token,
@@ -657,7 +661,11 @@ export function SessionPanel({
 
   const endSession = useCallback(() => {
     const mins = startedAtRef.current ? Math.max(1, Math.round((Date.now() - startedAtRef.current) / 60000)) : effectiveLessonMinutes;
-    import("@/lib/xp/actions").then(async (mod: any) => {
+    type XpModule = {
+      awardXp?: (minutes: number) => Promise<unknown>;
+      getXp?: () => Promise<{ streak?: number }>;
+    };
+    import("@/lib/xp/actions").then(async (mod: XpModule) => {
       if (mod.awardXp) await mod.awardXp(mins);
       const xp = await (mod.getXp ? mod.getXp() : Promise.resolve({ streak: 0 }));
       if (typeof window !== "undefined") {
@@ -669,9 +677,19 @@ export function SessionPanel({
 
   useEffect(() => {
     if (phase !== "live" || !sessionStartedAt) return;
-    const id = setInterval(() => setElapsed(Date.now() - sessionStartedAt), 1000);
+    const limitMs = effectiveLessonMinutes * 60 * 1000;
+    const tick = () => {
+      const value = Date.now() - sessionStartedAt;
+      setElapsed(value);
+      if (!autoEndedRef.current && value >= limitMs) {
+        autoEndedRef.current = true;
+        endSession();
+      }
+    };
+    tick();
+    const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [phase, sessionStartedAt]);
+  }, [phase, sessionStartedAt, effectiveLessonMinutes, endSession]);
 
   useEffect(() => {
     return () => {
@@ -769,6 +787,11 @@ export function SessionPanel({
       ? `تجربة مجانية: فاضل ${account.trialLessonsLeft} دروس × ${TRIAL_LESSON_MINUTES} دقيقة`
       : "مفيش رصيد متتبقّي";
 
+  const elapsedSeconds = Math.floor(elapsed / 1000);
+  const remainingSeconds = Math.max(0, effectiveLessonMinutes * 60 - elapsedSeconds);
+  const clock = (seconds: number) =>
+    `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+
   return (
     <div className="flex h-[calc(100dvh-4rem)] flex-col gap-3 overflow-hidden px-3 py-3 lg:flex-row lg:gap-6 lg:px-6 lg:py-5">
       <section className="flex min-h-0 w-full max-h-[36dvh] flex-col items-center gap-1 overflow-hidden lg:max-h-none lg:flex-1 lg:gap-4">
@@ -802,9 +825,17 @@ export function SessionPanel({
       </header>
 
       {phase === "live" && sessionStartedAt ? (
-        <div className="flex w-full items-center justify-between rounded-full border border-border px-3 py-1 text-[11px] lg:hidden">
-          <span className="text-muted">استغرقنا {Math.floor(elapsed / 60000)}:{String(Math.floor((elapsed % 60000) / 1000)).padStart(2, "0")}</span>
-          <span className="font-semibold">متبقي {Math.max(0, effectiveLessonMinutes * 60 - Math.floor(elapsed / 1000)) >= 60 ? `${Math.floor(Math.max(0, effectiveLessonMinutes * 60 - Math.floor(elapsed / 1000)) / 60)}:${String(Math.max(0, effectiveLessonMinutes * 60 - Math.floor(elapsed / 1000)) % 60).padStart(2, "0")}` : `${Math.max(0, effectiveLessonMinutes * 60 - Math.floor(elapsed / 1000))} ث`}</span>
+        <div className="flex w-full items-center justify-between gap-2 rounded-full border border-border px-3 py-1 text-[11px]">
+          <span className="text-muted">استغرقنا {clock(elapsedSeconds)}</span>
+          <span
+            className={
+              remainingSeconds <= 60
+                ? "font-semibold text-red-600"
+                : "font-semibold"
+            }
+          >
+            متبقي {clock(remainingSeconds)}
+          </span>
         </div>
       ) : null}
 

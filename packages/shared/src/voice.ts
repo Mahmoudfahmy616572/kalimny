@@ -44,10 +44,15 @@ export interface LessonPlan {
   unit: CurriculumUnit;
   goal: string | null;
   interests: string[];
-  /** أهم كلمات آخر ملخص — للتذكير في بداية الجلسة */
+  /** كلمات المراجعة من آخر درس — ممكن تكون فاضية */
   recapWords: string[];
-  /** رقم الوحدة الحالي — بيتسجّل مع ملخص الجلسة */
+  /** رقم الوحدة الحالية — بيتغيّر مع تقدّم الجلسات */
   unitIndex: number;
+  /**
+   * مدة الجلسة بالدقائق — المدرّس بيستخدمها عشان يوزّع السياق على الوقت
+   * المتاح ويقفل المحادثة طبيعي قبل ما الوقت يخلص.
+   */
+  durationMinutes?: number;
 }
 
 export interface SessionOptions {

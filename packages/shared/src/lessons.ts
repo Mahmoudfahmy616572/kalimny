@@ -38,7 +38,15 @@ export const MAX_LESSON_MINUTES = 90;
 /** المدد المتاحة للدرس الواحد في الاشتراك المدفوع. */
 export const LESSON_DURATIONS_MINUTES = [15, 30, 50] as const;
 
-export type LessonDurationMinutes = (typeof LESSON_DURATIONS_MINUTES)[number];
+/**
+ * تحدي سريع (5 دقائق) — مش جزء من اختيارات المدة العادية، بيتفتح بلينك
+ * `?minutes=5` بس. لازم السيرفر يعرفه عشان يحجز ٥ دقايق بدل ما يحوّله لـ30.
+ */
+export const QUICK_CHALLENGE_MINUTES = 5;
+
+export type LessonDurationMinutes =
+  | (typeof LESSON_DURATIONS_MINUTES)[number]
+  | typeof QUICK_CHALLENGE_MINUTES;
 
 /** المدة الافتراضية لو الطالب ما اختارش. */
 export const DEFAULT_LESSON_MINUTES: LessonDurationMinutes = 30;
@@ -48,11 +56,14 @@ export const DEFAULT_LESSON_MINUTES: LessonDurationMinutes = 30;
  * العميل ممكن يبعت أي رقم، فما نثقش فيه.
  */
 export function normalizeLessonMinutes(value: unknown): LessonDurationMinutes {
+  if (value === QUICK_CHALLENGE_MINUTES) {
+    return QUICK_CHALLENGE_MINUTES;
+  }
   if (
     typeof value === "number" &&
-    LESSON_DURATIONS_MINUTES.includes(value as LessonDurationMinutes)
+    LESSON_DURATIONS_MINUTES.includes(value as (typeof LESSON_DURATIONS_MINUTES)[number])
   ) {
-    return value as LessonDurationMinutes;
+    return value as (typeof LESSON_DURATIONS_MINUTES)[number];
   }
   return DEFAULT_LESSON_MINUTES;
 }

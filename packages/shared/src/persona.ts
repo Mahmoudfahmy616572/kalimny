@@ -304,29 +304,56 @@ export function buildSystemInstructions(
 
   const planLines: string[] = [];
   if (lessonPlan) {
-    const { unit, goal, interests, recapWords } = lessonPlan;
+    const { unit, goal, interests, recapWords } = lessonPlan as any;
     planLines.push(
       ``,
-      `## Current lesson (follow this unit)`,
-      `- Unit: ${unit.titleAr} (${unit.id}).`,
-      `- Grammar focus: ${unit.grammarAr}.`,
-      `- Vocabulary themes: ${unit.vocabThemes.join(", ")}.`,
-      `- Example phrases in Arabic for level reference: ${unit.samplePhrases.join(" / ")}.`,
-      `- Generate the actual ${L} words and sentences yourself from these themes — do NOT invent a different topic.`,
+      `## Current lesson (ROADMAP ONLY)`,
+      `- Unit: ${unit.titleAr} (${unit.id})${unit.sublevel ? ` | A${unit.level.slice(1)}.${unit.sublevel}` : ""}.`,
+      unit.goal ? `- Session goal (Can-Do): ${unit.goal}.` : goal ? `- Learner's goal: ${goal}.` : "",
+      unit.mustCover && unit.mustCover.length > 0
+        ? `- MUST COVER (minimum to guarantee learning): ${unit.mustCover.slice(0, 4).join(" | ")}.`
+        : unit.grammarAr
+          ? `- Grammar focus (suggestion only): ${unit.grammarAr}.`
+          : "",
+      unit.coreVocab && unit.coreVocab.length > 0
+        ? `- Core vocab (teach in context when natural): ${unit.coreVocab.slice(0, 8).join(", ")}.`
+        : unit.vocabThemes && unit.vocabThemes.length > 0
+          ? `- Vocabulary themes (suggestions): ${unit.vocabThemes.join(", ")}.`
+          : "",
+      unit.canExplore && unit.canExplore.length > 0
+        ? `- CAN EXPLORE FREELY (banter zone): ${unit.canExplore.slice(0, 6).join(" | ")}. If learner goes here, follow them, joke, laugh, then gently steer back.`
+        : "",
+      unit.samplePhrases && unit.samplePhrases.length > 0
+        ? `- Example phrases for inspiration: ${unit.samplePhrases.slice(0, 4).join(" / ")}.`
+        : "",
+      `- Generate the actual ${L} words and sentences yourself in real conversation — do NOT read a list. Do NOT invent an entirely different topic.`,
     );
-    if (goal) {
+    // filter empty strings
+    const filtered = planLines.filter((l) => l !== "");
+    planLines.length = 0;
+    planLines.push(...filtered);
+    if (goal && !unit.goal) {
       planLines.push(
-        `- Learner's goal: ${goal}. Frame examples and scenarios around it when possible.`,
+        `- Learner's goal: ${goal}. Weave examples around it when it fits naturally.`,
       );
     }
-    if (interests.length > 0) {
+    if (interests && interests.length > 0) {
       planLines.push(
-        `- Learner's interests: ${interests.join(", ")}. Prefer these as conversation hooks.`,
+        `- Learner's interests: ${interests.join(", ")}. Use as light hooks for banter ONLY, never force them.`,
       );
     }
-    if (recapWords.length > 0) {
+    if (recapWords && recapWords.length > 0) {
       planLines.push(
-        `- Start by casually recapping these words from the last lesson: ${recapWords.join(", ")}. Ask the learner if they still remember them, tease them if they forgot, then move into the new unit.`,
+        `- Casually recap a couple from last time: ${recapWords.slice(0, 4).join(", ")}. If they forgot, tease gently and move on — don't quiz them like an exam.`,
+      );
+    }
+    const duration = lessonPlan.durationMinutes;
+    if (duration && duration > 0) {
+      const warmup = Math.max(1, Math.round(duration * 0.15));
+      const wrap = Math.max(1, Math.round(duration * 0.1));
+      planLines.push(
+        `- Session length: ${duration} minutes total. Pace the whole conversation to fit this window naturally: roughly ${warmup} min warm-up and banter, the middle for MUST COVER practice, and the last ${wrap} min wrapping up and saying goodbye like a friend.`,
+        `- Never announce the clock or say "we have X minutes left". Just let the pacing feel natural. If time is short, prioritize MUST COVER over extra tangents.`,
       );
     }
   }
