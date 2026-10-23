@@ -2,16 +2,45 @@
 
 import { createClient } from "@/lib/supabase/server";
 
-type LeaderboardUser = {
+export type LeaderboardUser = {
   user_id: string;
+  display_name: string;
   xp: number;
   streak: number;
   total_sessions: number;
   total_minutes: number;
-  display_name?: string | null;
-  email?: string | null;
+  rank: number;
 };
 
+type LeaderboardRow = {
+  user_id: string;
+  display_name: string | null;
+  xp: number | null;
+  streak: number | null;
+  total_sessions: number | null;
+  total_minutes: number | null;
+  rank: number | null;
+};
+
+type MyRankRow = { rank: number | null; xp: number | null };
+
+function toUser(row: LeaderboardRow, index: number): LeaderboardUser {
+  return {
+    user_id: row.user_id,
+    display_name: row.display_name?.trim() || "مستخدم",
+    xp: row.xp ?? 0,
+    streak: row.streak ?? 0,
+    total_sessions: row.total_sessions ?? 0,
+    total_minutes: row.total_minutes ?? 0,
+    rank: row.rank ?? index + 1,
+  };
+}
+
+/**
+ * الليدر بورد بيقرا من RPC مش من الجدول مباشرة: RLS بتسمح لكل مستخدم
+ * بصفه بس، والدالة SECURITY DEFINER هي اللي بترجع أعلى N + اسم العرض
+ * الآمن (من غير إيميل).
+ */
 export async function getLeaderboard() {
   try {
     const supabase = await createClient();
@@ -19,84 +48,35 @@ export async function getLeaderboard() {
       data: { user },
     } = await supabase.auth.getUser();
 
-    const { data, error } = await supabase
-      .from("user_xp")
-      .select("user_id, xp, streak, total_sessions, total_minutes")
-      .order("xp", { ascending: false })
-      .order("streak", { ascending: false })
-      .limit(10);
+    const { data, error } = await supabase.rpc("get_leaderboard", {
+      p_limit: 10,
+    });
 
-    if (error || !data || data.length === 0) {
+    if (error || !Array.isArray(data) || data.length === 0) {
       return { users: [] as LeaderboardUser[], myRank: null, myXp: 0 };
     }
 
-    let users: LeaderboardUser[] = data as LeaderboardUser[];
-
-    const userIds = users.map((u) => u.user_id).filter(Boolean);
-    if (userIds.length > 0) {
-      try {
-        const { data: names } = await supabase.rpc("get_leaderboard_names", {
-          p_user_ids: userIds,
-        } as never);
-
-        if (Array.isArray(names)) {
-          const map = new Map<string, Partial<LeaderboardUser>>();
-          const rows = names as Array<{
-            user_id?: string | null;
-            display_name?: string | null;
-            email?: string | null;
-          }>;
-          for (const n of rows) {
-            if (n?.user_id) {
-              map.set(n.user_id, {
-                display_name: n.display_name,
-                email: n.email,
-              });
-            }
-          }
-          users = users.map((u) => ({
-            ...u,
-            display_name: map.get(u.user_id)?.display_name ?? u.display_name,
-            email: map.get(u.user_id)?.email ?? u.email,
-          }));
-        }
-      } catch {
-        // مفيش RPC أو مفيش صلاحيات — نكمل بدون أسماء
-      }
-    }
+    const users = (data as LeaderboardRow[]).map(toUser);
 
     let myRank: number | null = null;
     let myXp = 0;
 
     if (user) {
-      const idx = users.findIndex((d) => d.user_id === user.id);
-      if (idx !== -1) {
-        myRank = idx + 1;
-        myXp = users[idx].xp || 0;
+      const mine = users.find((u) => u.user_id === user.id);
+      if (mine) {
+        myRank = mine.rank;
+        myXp = mine.xp;
       } else {
-        try {
-          const { data: me } = await supabase
-            .from("user_xp")
-            .select("xp")
-            .eq("user_id", user.id)
-            .maybeSingle();
-
-          myXp = me?.xp || 0;
-
-          const { count } = await supabase
-            .from("user_xp")
-            .select("*", { count: "exact", head: true })
-            .gt("xp", myXp);
-
-          myRank = (count || 0) + 1;
-        } catch {
-          myRank = null;
-          myXp = 0;
+        const { data: rankRows } = await supabase.rpc("get_my_rank");
+        const row = Array.isArray(rankRows) ? (rankRows[0] as MyRankRow) : null;
+        if (row) {
+          myRank = row.rank ?? null;
+          myXp = row.xp ?? 0;
         }
       }
     }
 
-    return { users: users.slice(0, 10), myRank, myXp };
+    return { users, myRank, myXp };
   } catch {
     return { users: [] as LeaderboardUser[], myRank: null, myXp: 0 };
   }

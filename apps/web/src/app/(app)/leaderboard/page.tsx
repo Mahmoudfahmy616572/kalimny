@@ -38,8 +38,8 @@ async function LeaderboardContent() {
             <span className="text-center">نقاط XP</span>
           </div>
           <ul className="divide-y divide-border">
-            {users.map((u, i) => {
-              const rank = i + 1;
+            {users.map((u) => {
+              const rank = u.rank;
               const emoji = rankEmoji(rank);
               const isMe = lb.myRank === rank && lb.myRank !== null;
               return (
@@ -54,17 +54,12 @@ async function LeaderboardContent() {
                   </div>
                   <div className="flex min-w-0 items-center gap-2">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-cream text-sm font-semibold">
-                      {(u.display_name || u.email || "U")[0]?.toUpperCase()}
+                      {u.display_name[0]?.toUpperCase()}
                     </div>
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium">
-                        {u.display_name || (u.email ? u.email.split("@")[0] : "مستخدم")}
-                        {isMe ? <span className="mr-1 text-xs text-terracotta">(أنت)</span> : null}
-                      </p>
-                      {u.email && !u.display_name ? (
-                        <p className="truncate text-xs text-muted">{u.email}</p>
-                      ) : null}
-                    </div>
+                    <p className="min-w-0 truncate text-sm font-medium">
+                      {u.display_name}
+                      {isMe ? <span className="mr-1 text-xs text-terracotta">(أنت)</span> : null}
+                    </p>
                   </div>
                   <div className="flex items-center justify-center gap-1 text-sm">
                     <span>🔥</span>

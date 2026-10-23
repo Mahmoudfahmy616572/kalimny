@@ -134,6 +134,8 @@ export function SessionPanel({
   } | null>(null);
   // بيمنع إنهاء الجلسة أكتر من مرة لما التايمر يعدّي الحد.
   const autoEndedRef = useRef(false);
+  // بيمنع منح XP مرتين لو الإنهاء اليدوي والتلقائي حصلوا في نفس اللحظة.
+  const awardedRef = useRef(false);
 
   // الوحدة الفعلية اللي بنشتغل عليها دلوقتي (بتحوّل بعد ما الجلسة تتقدّم).
   const activeUnitIndex = unitIndexOverride ?? lessonPlan?.unitIndex ?? 0;
@@ -462,6 +464,7 @@ export function SessionPanel({
     setError(null);
     setSummary(null);
     autoEndedRef.current = false;
+    awardedRef.current = false;
     setPhase("connecting");
 
     let provider: GeminiLiveProvider | null = null;
@@ -656,18 +659,31 @@ export function SessionPanel({
   }, [draft]);
 
   const endSession = useCallback(() => {
-    const mins = startedAtRef.current ? Math.max(1, Math.round((Date.now() - startedAtRef.current) / 60000)) : effectiveLessonMinutes;
+    const elapsedMinutes = startedAtRef.current
+      ? Math.round((Date.now() - startedAtRef.current) / 60000)
+      : effectiveLessonMinutes;
+    const mins = Math.min(effectiveLessonMinutes, Math.max(1, elapsedMinutes));
+    type XpResult = { ok?: boolean; gained?: number; streak?: number };
     type XpModule = {
-      awardXp?: (minutes: number) => Promise<unknown>;
+      awardXp?: (minutes: number) => Promise<XpResult>;
       getXp?: () => Promise<{ streak?: number }>;
     };
-    import("@/lib/xp/actions").then(async (mod: XpModule) => {
-      if (mod.awardXp) await mod.awardXp(mins);
-      const xp = await (mod.getXp ? mod.getXp() : Promise.resolve({ streak: 0 }));
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(new CustomEvent("kalimny:xp", { detail: { gained: Math.max(10, Math.round(mins * 2)), streak: xp.streak || 0 } }));
-      }
-    }).catch(() => {});
+    if (!awardedRef.current) {
+      awardedRef.current = true;
+      import("@/lib/xp/actions").then(async (mod: XpModule) => {
+        const result = mod.awardXp ? await mod.awardXp(mins) : null;
+        let streak = result?.streak ?? 0;
+        if (!result?.ok) {
+          const xp = await (mod.getXp ? mod.getXp() : Promise.resolve({ streak: 0 }));
+          streak = xp.streak || 0;
+        }
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("kalimny:xp", {
+            detail: { gained: result?.gained ?? Math.max(10, mins * 2), streak },
+          }));
+        }
+      }).catch(() => {});
+    }
     void stop();
   }, [stop, effectiveLessonMinutes]);
 
