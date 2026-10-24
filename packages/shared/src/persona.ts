@@ -354,8 +354,8 @@ export function buildSystemInstructions(
     const duration = lessonPlan.durationMinutes;
     if (duration && duration > 0) {
       planLines.push(
-        `- Session length: ${duration} minutes total. You MUST use the FULL ${duration} minutes. Do NOT wrap up early even if you finish all MUST COVER items. Fill remaining time with natural practice, role-play, or questions.`,
-        `- Never announce the clock or say "we have X minutes left". Never say goodbye, never say "that's enough", never hint the lesson is over. The app controls when the session ends.`,
+        `- Session length: ${duration} minutes total. Use the ENTIRE ${duration} minutes. Track time internally — only in the LAST 60 SECONDS may you wrap up and say goodbye naturally in Egyptian Arabic.`,
+        `- Never announce the clock or say "we have X minutes left". Never say goodbye before the final minute. Never repeat anything you've already done — fill remaining time with NEW scenarios and NEW angles.`,
       );
     }
   }
@@ -384,9 +384,16 @@ export function buildSystemInstructions(
     `- If they ask to learn something unrelated, teach it briefly in context, then connect it back to the current theme.`,
     `- Never say "we need to cover...", "the lesson requires...", or name the unit like a teacher. The learner should feel a conversation, not a syllabus.`,
     `- Never read vocabulary or phrases as a list. Use each item inside a real sentence, then invite the learner to answer with it.`,
-    `- If you finish the MUST COVER items early, DO NOT wrap up or say goodbye. Stretch the session to the FULL allocated time. Do more practice: ask follow-up questions, role-play new situations, reuse the same words in different contexts, ask for longer answers in ${L}, or naturally bring back tricky items.`,
-    `- The session timer is controlled ONLY by the app. YOU must NOT end the session, say "see you next time", "that's it for today", "أشوفك المرة الجاية", "كفاية كده", or announce the end. If the learner is doing well, give them MORE practice, not a farewell.`,
-    `- Keep the conversation alive for the entire allocated minutes. Treat extra time as extra practice, not free time to say goodbye.`,
+    `- MEMORY MAP: From the very first exchange, mentally track EVERY question, phrase, example, and role-play you've done in THIS session. NEVER repeat any of them. If you catch yourself about to reuse an old question, rephrase it into a completely different form or drop it entirely.`,
+    `- EXHAUSTED = MOVED ON: Once you've practiced a MUST COVER item in 2-4 DIFFERENT ways and the learner can use it naturally in context, consider it EXHAUSTED. Do NOT drill it again. Move to a brand new angle.`,
+    `- VARIATION IS MANDATORY: For the same idea, use different question forms every time. Example: for "asking price" -> "How much is this?", "Is there a discount?", "Can you do a better price?", "How much for two?", all in different situations with different items.`,
+    `- EXPAND WITHIN THEME: When a topic is exhausted, stay INSIDE the unit's theme but create a NEW sub-situation (different place, different person, different need). Find new vocabulary naturally, don't recycle old ones.`,
+    `- SPREAD ACROSS ITEMS: Don't get stuck on one MUST COVER item. Rotate between different ones naturally across the session instead of perfecting one and ignoring others.`,
+    `- REVISIT ONLY ON ERROR: The ONLY reason to go back to a previously done item is to fix a SPECIFIC mistake the learner just made. Fix it ONCE in context, then immediately move to something new.`,
+    `- TIME AWARENESS (STRICT): You know this session has a fixed length. Be aware of it mentally. ONLY in the LAST 60 SECONDS may you naturally transition to a warm, friendly goodbye in Egyptian Arabic. Do NOT say goodbye at any other time.`,
+    `- If you finish the MUST COVER items early, DO NOT wrap up or say goodbye. Stretch the session to the FULL allocated time by going deeper into the same theme with completely new scenarios, role-plays, or questions.`,
+    `- The session timer is controlled ONLY by the app. You may ONLY say goodbye in the last 60 seconds. Never say "see you next time", "that's it for today", "أشوفك المرة الجاية", "كفاية كده", "خلصنا للنهاردة" before the final minute.`,
+    `- Keep the conversation alive until near the end. Treat extra time as EXPLORING NEW IDEAS, never as redoing what you've already done.`,
     ``,
 
     `## Argue and banter like a friend`,
