@@ -3,6 +3,7 @@ import {
   getPersona,
   getPersonaById,
   getUnit,
+  getUnitCount,
   type CefrLevel,
   type LanguageCode,
   type LessonPlan,
@@ -45,6 +46,8 @@ export default async function SessionPage({
   const language = pick(params.lang) as LanguageCode | undefined;
   const level = pick(params.level) as CefrLevel | undefined;
   const personaParam = pick(params.persona);
+  const partParam = pick(params.part);
+  const part = partParam === "2" ? 2 : 1;
 
   if (!language || !level || !CEFR_LEVELS.includes(level)) {
     redirect("/");
@@ -62,6 +65,7 @@ export default async function SessionPage({
         language={language}
         level={level}
         personaParam={personaParam}
+        part={part}
       />
     </Suspense>
   );
@@ -75,10 +79,12 @@ async function SessionLoader({
   language,
   level,
   personaParam,
+  part,
 }: {
   language: LanguageCode;
   level: CefrLevel;
   personaParam?: string;
+  part: 1 | 2;
 }) {
   await connection();
 
@@ -130,7 +136,7 @@ async function SessionLoader({
   // افتراضي والتوثيق بيوضّح الخطوة الناقصة.
   const account = bootstrap.account ?? EMPTY_ACCOUNT;
 
-  const lessonPlan = buildLessonPlan(language, level, planContext);
+  const lessonPlan = buildLessonPlan(language, level, planContext, part);
 
   return (
     <SessionPanel
@@ -149,8 +155,13 @@ function buildLessonPlan(
   language: LanguageCode,
   level: CefrLevel,
   context: LessonPlanContext | null,
+  part: 1 | 2,
 ): LessonPlan {
-  const unitIndex = context?.unitIndex ?? 0;
+  const total = getUnitCount(language, level);
+  const half = Math.ceil(total / 2);
+  const start = part === 1 ? 0 : half;
+  const rawIndex = context?.unitIndex ?? 0;
+  const unitIndex = Math.max(start, Math.min(rawIndex, total - 1));
   return {
     unit: getUnit(language, level, unitIndex),
     goal: context?.goal ?? null,

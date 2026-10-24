@@ -50,11 +50,13 @@ export function StartPanel({
     languageOfPersona(defaultPersonaId) ?? defaultLanguage ?? "en",
   );
   const [scenario, setScenario] = useState<string>("");
+  const [sublevel, setSublevel] = useState<1 | 2>(1);
 
   // حفظ الاختيار في الحساب — من غير كده خريطة التقدّم بتفضل عالقة
   // بالمستوى القديم والصفحة بتقرأه من السيرفر كل مرة.
   const chooseLevel = async (next: CefrLevel) => {
     setLevel(next);
+    setSublevel(1);
     await saveHomePreferences({ level: next, language });
     router.refresh();
   };
@@ -111,6 +113,38 @@ export function StartPanel({
             </button>
           ))}
         </div>
+        <div
+          role="tablist"
+          aria-label="نص المستوى"
+          className="flex flex-wrap justify-center gap-2 rounded-full border border-border bg-card p-1"
+        >
+          <button
+            type="button"
+            role="tab"
+            aria-selected={sublevel === 1}
+            onClick={() => setSublevel(1)}
+            className={`rounded-full px-4 py-1.5 text-xs font-semibold transition ${
+              sublevel === 1
+                ? "bg-espresso text-cream"
+                : "text-muted hover:bg-cream"
+            }`}
+          >
+            الجزء الأول
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={sublevel === 2}
+            onClick={() => setSublevel(2)}
+            className={`rounded-full px-4 py-1.5 text-xs font-semibold transition ${
+              sublevel === 2
+                ? "bg-espresso text-cream"
+                : "text-muted hover:bg-cream"
+            }`}
+          >
+            الجزء الثاني
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-col items-center gap-3 px-6">
@@ -166,7 +200,7 @@ export function StartPanel({
           ))}
         </div>
         <Link
-          href={`/session?lang=${language}&level=${level}&persona=${personas[0]?.id}&minutes=5`}
+          href={`/session?lang=${language}&level=${level}&persona=${personas[0]?.id}&minutes=5&part=${sublevel}`}
           className="rounded-full border border-terracotta/40 px-5 py-2 text-sm font-semibold text-terracotta transition hover:bg-terracotta-soft/30"
         >
           ⚡ وضع ٥ دقائق تحدي
@@ -176,7 +210,7 @@ export function StartPanel({
       <ul className="grid w-full max-w-lg grid-cols-1 gap-4 px-6 sm:grid-cols-2">
         {personas.map((persona) => {
           const isSelected = savedPersonaId === persona.id;
-          const href = `/session?lang=${language}&level=${level}&persona=${persona.id}${scenario ? `&scenario=${scenario}` : ""}`;
+          const href = `/session?lang=${language}&level=${level}&persona=${persona.id}&part=${sublevel}${scenario ? `&scenario=${scenario}` : ""}`;
           return (
             <li key={persona.id}>
               <Link
