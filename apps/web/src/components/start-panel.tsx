@@ -51,14 +51,21 @@ export function StartPanel({
   );
   const [scenario, setScenario] = useState<string>("");
   const [sublevel, setSublevel] = useState<1 | 2>(1);
+  const [levelSheetOpen, setLevelSheetOpen] = useState(false);
 
   // حفظ الاختيار في الحساب — من غير كده خريطة التقدّم بتفضل عالقة
   // بالمستوى القديم والصفحة بتقرأه من السيرفر كل مرة.
   const chooseLevel = async (next: CefrLevel) => {
     setLevel(next);
     setSublevel(1);
+    setLevelSheetOpen(false);
     await saveHomePreferences({ level: next, language });
     router.refresh();
+  };
+
+  const chooseSublevel = (next: 1 | 2) => {
+    setSublevel(next);
+    setLevelSheetOpen(false);
   };
 
   const chooseLanguage = async (next: LanguageCode) => {
@@ -91,61 +98,87 @@ export function StartPanel({
 
       <div className="flex flex-col items-center gap-3 px-6">
         <p className="text-sm font-semibold text-muted">مستواك دلوقتي</p>
-        <div
-          role="tablist"
-          aria-label="المستوى"
-          className="flex flex-wrap justify-center gap-2 rounded-full border border-border bg-card p-1.5"
+        <button
+          type="button"
+          onClick={() => setLevelSheetOpen(true)}
+          className="flex items-center gap-2 rounded-full border border-border bg-card px-6 py-2 text-sm font-semibold shadow-sm transition hover:bg-cream"
         >
-          {CEFR_LEVELS.map((option) => (
-            <button
-              key={option}
-              type="button"
-              role="tab"
-              aria-selected={option === level}
-              onClick={() => chooseLevel(option)}
-              className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
-                option === level
-                  ? "bg-espresso text-cream"
-                  : "text-muted hover:bg-cream"
-              }`}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-        <div
-          role="tablist"
-          aria-label="نص المستوى"
-          className="flex flex-wrap justify-center gap-2 rounded-full border border-border bg-card p-1"
-        >
-          <button
-            type="button"
-            role="tab"
-            aria-selected={sublevel === 1}
-            onClick={() => setSublevel(1)}
-            className={`rounded-full px-4 py-1.5 text-xs font-semibold transition ${
-              sublevel === 1
-                ? "bg-espresso text-cream"
-                : "text-muted hover:bg-cream"
-            }`}
-          >
-            الجزء الأول
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={sublevel === 2}
-            onClick={() => setSublevel(2)}
-            className={`rounded-full px-4 py-1.5 text-xs font-semibold transition ${
-              sublevel === 2
-                ? "bg-espresso text-cream"
-                : "text-muted hover:bg-cream"
-            }`}
-          >
-            الجزء الثاني
-          </button>
-        </div>
+          <span className="text-base">{level}</span>
+          <span className="text-muted">·</span>
+          <span className="text-xs text-muted">{level}.{sublevel}</span>
+          <span aria-hidden className="text-muted">▾</span>
+        </button>
       </div>
+
+      {levelSheetOpen ? (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 px-4 pb-4 sm:items-center"
+          onClick={() => setLevelSheetOpen(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="w-full max-w-sm overflow-hidden rounded-organic border border-border bg-card shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-5 py-4">
+              <p className="font-semibold">اختار المستوى</p>
+              <button
+                type="button"
+                onClick={() => setLevelSheetOpen(false)}
+                className="text-xs text-muted"
+              >
+                إغلاق
+              </button>
+            </div>
+            <div className="flex flex-col">
+              {CEFR_LEVELS.map((option) => {
+                const isActive = option === level;
+                return (
+                  <div key={option} className="border-t border-border">
+                    <button
+                      type="button"
+                      onClick={() => chooseLevel(option)}
+                      className={`flex w-full items-center justify-between px-5 py-3 text-sm font-semibold transition ${
+                        isActive ? "bg-cream" : "hover:bg-cream"
+                      }`}
+                    >
+                      <span>{option}</span>
+                      {isActive ? <span className="text-xs text-terracotta">مختار</span> : null}
+                    </button>
+                    {isActive ? (
+                      <div className="flex gap-2 px-5 pb-3">
+                        <button
+                          type="button"
+                          onClick={() => chooseSublevel(1)}
+                          className={`flex-1 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                            sublevel === 1
+                              ? "bg-espresso text-cream"
+                              : "border border-border hover:bg-cream"
+                          }`}
+                        >
+                          {option}.1
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => chooseSublevel(2)}
+                          className={`flex-1 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                            sublevel === 2
+                              ? "bg-espresso text-cream"
+                              : "border border-border hover:bg-cream"
+                          }`}
+                        >
+                          {option}.2
+                        </button>
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <div className="flex flex-col items-center gap-3 px-6">
         <p className="text-sm font-semibold text-muted">
