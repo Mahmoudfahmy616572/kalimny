@@ -4,4 +4,5 @@ export * from "./languages";
 export * from "./scenarios";
 export * from "./lessons";
 export * from "./persona";
+export * from "./exams";
 export * from "./voice";
