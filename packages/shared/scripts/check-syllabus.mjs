@@ -33,6 +33,11 @@ const EXPECTED_UNITS = {
   C2: 6,
 };
 
+// الإنجليزي C1 = وحدات كتاب English File C1.1 (10 Files).
+const EXPECTED_UNITS_BY_LANGUAGE = {
+  en: { C1: 10 },
+};
+
 const LEVELS = Object.keys(EXPECTED_UNITS);
 const LANGUAGES = ["en", "fr", "es", "de"];
 
@@ -70,9 +75,10 @@ try {
 
   for (const language of LANGUAGES) {
     for (const level of LEVELS) {
+      const expected = EXPECTED_UNITS_BY_LANGUAGE[language]?.[level] ?? EXPECTED_UNITS[level];
       check(
-        getUnitCount(language, level) === EXPECTED_UNITS[level],
-        `${language}/${level}: expected ${EXPECTED_UNITS[level]} units, got ${getUnitCount(language, level)}`,
+        getUnitCount(language, level) === expected,
+        `${language}/${level}: expected ${expected} units, got ${getUnitCount(language, level)}`,
       );
     }
   }

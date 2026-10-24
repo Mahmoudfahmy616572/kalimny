@@ -1,6 +1,9 @@
 import type { CefrLevel, LanguageCode } from "../languages";
 
+import { DE_SYLLABUS } from "./de";
 import { EN_SYLLABUS } from "./en";
+import { ES_SYLLABUS } from "./es";
+import { FR_SYLLABUS } from "./fr";
 import type { SyllabusMap, SyllabusUnit } from "./types";
 
 /**
@@ -9,6 +12,9 @@ import type { SyllabusMap, SyllabusUnit } from "./types";
  */
 const SYLLABUS: SyllabusMap = {
   en: EN_SYLLABUS,
+  fr: FR_SYLLABUS,
+  es: ES_SYLLABUS,
+  de: DE_SYLLABUS,
 };
 
 export function getSyllabusUnits(
