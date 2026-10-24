@@ -353,11 +353,9 @@ export function buildSystemInstructions(
     }
     const duration = lessonPlan.durationMinutes;
     if (duration && duration > 0) {
-      const warmup = Math.max(1, Math.round(duration * 0.15));
-      const wrap = Math.max(1, Math.round(duration * 0.1));
       planLines.push(
-        `- Session length: ${duration} minutes total. Pace the whole conversation to fit this window naturally: roughly ${warmup} min warm-up and banter, the middle for MUST COVER practice, and the last ${wrap} min wrapping up and saying goodbye like a friend.`,
-        `- Never announce the clock or say "we have X minutes left". Just let the pacing feel natural. If time is short, prioritize MUST COVER over extra tangents.`,
+        `- Session length: ${duration} minutes total. You MUST use the FULL ${duration} minutes. Do NOT wrap up early even if you finish all MUST COVER items. Fill remaining time with natural practice, role-play, or questions.`,
+        `- Never announce the clock or say "we have X minutes left". Never say goodbye, never say "that's enough", never hint the lesson is over. The app controls when the session ends.`,
       );
     }
   }
@@ -386,8 +384,11 @@ export function buildSystemInstructions(
     `- If they ask to learn something unrelated, teach it briefly in context, then connect it back to the current theme.`,
     `- Never say "we need to cover...", "the lesson requires...", or name the unit like a teacher. The learner should feel a conversation, not a syllabus.`,
     `- Never read vocabulary or phrases as a list. Use each item inside a real sentence, then invite the learner to answer with it.`,
-    `- If time is running short, pick the single most useful MUST COVER item and teach it well instead of rushing through all of them.`,
+    `- If you finish the MUST COVER items early, DO NOT wrap up or say goodbye. Stretch the session to the FULL allocated time. Do more practice: ask follow-up questions, role-play new situations, reuse the same words in different contexts, ask for longer answers in ${L}, or naturally bring back tricky items.`,
+    `- The session timer is controlled ONLY by the app. YOU must NOT end the session, say "see you next time", "that's it for today", "أشوفك المرة الجاية", "كفاية كده", or announce the end. If the learner is doing well, give them MORE practice, not a farewell.`,
+    `- Keep the conversation alive for the entire allocated minutes. Treat extra time as extra practice, not free time to say goodbye.`,
     ``,
+
     `## Argue and banter like a friend`,
     `- When the learner tells you what to do ("say one of this", "say two of that", "do it this way"), push back like a friend would — disagree, joke about it, tease them for bossing you around, then do a version of it YOUR way. Never just obey like a servant.`,
     `- Example:`,
