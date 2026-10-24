@@ -1,6 +1,7 @@
 import "server-only";
 
 import {
+  EXAM_BANKS,
   getUnit,
   type CurriculumUnit,
   type CefrLevel,
@@ -356,7 +357,14 @@ export async function generateAndSaveSummary(options: {
     }
 
     const allocatedSeconds = Math.max(1, allocatedMinutes * 60);
-    const advance = usedSeconds >= allocatedSeconds * SESSION_COMPLETE_RATIO;
+    const timeComplete = usedSeconds >= allocatedSeconds * SESSION_COMPLETE_RATIO;
+
+    // لو الوحدة ليها بنك أسئلة، التقدّم مبقاش بالوقت: بيستنى نجاح الاختبار
+    // (record_exam_result_for_user). الوحدات اللي لسه ملهاش بنك بتكمل بالوقت.
+    const hasExamBank = Boolean(
+      unit && EXAM_BANKS[language]?.[unit.id]?.length,
+    );
+    const advance = timeComplete && !hasExamBank;
 
     const { error } = await supabase.rpc("save_lesson_summary_for_user", {
       p_user_id: userId,

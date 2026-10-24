@@ -10,7 +10,8 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "check:syllabus": "node scripts/check-syllabus.mjs"
+    "check:syllabus": "node scripts/check-syllabus.mjs",
+    "generate:exams": "node scripts/generate-exam-banks.mjs"
   },
   "devDependencies": {
     "typescript": "^5"

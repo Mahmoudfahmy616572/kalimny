@@ -927,12 +927,23 @@ export function SessionPanel({
             ) : summary.status === "ready" ? (
               <>
                 <p className="text-sm font-semibold">✅ ملخص جلستك جاهز!</p>
-                <Link
-                  href="/review"
-                  className="mt-3 inline-block rounded-full bg-terracotta px-5 py-2 text-xs font-semibold text-white transition hover:brightness-95"
-                >
-                  شوف الملخصات ←
-                </Link>
+                <p className="mt-1 text-xs text-muted">
+                  خد اختبار قصير على الوحدة دي عشان تتأكد إنك استوعبتها.
+                </p>
+                <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+                  <Link
+                    href={`/exam?session=${encodeURIComponent(summary.sessionId)}`}
+                    className="inline-block rounded-full bg-terracotta px-5 py-2 text-xs font-semibold text-white transition hover:brightness-95"
+                  >
+                    ابدأ اختبار الوحدة ←
+                  </Link>
+                  <Link
+                    href="/review"
+                    className="inline-block rounded-full border border-border px-5 py-2 text-xs font-semibold transition hover:bg-cream"
+                  >
+                    شوف الملخصات
+                  </Link>
+                </div>
               </>
             ) : (
               <>

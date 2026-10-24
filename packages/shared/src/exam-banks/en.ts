@@ -1,0 +1,417 @@
+import type { ExamQuestion } from "../exams";
+
+// توليد تلقائي من scripts/generate-exam-banks.mjs. ماتعدّلهوش بيدك.
+export const EXAM_BANK_EN: Record<string, ExamQuestion[]> = {
+  "en-a2-u01": [
+    {
+      "id": "en-a2-u01-v01",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "كلمة relative معناها إيه؟",
+      "options": [
+        "قريب",
+        "صاحب",
+        "جار",
+        "زميل"
+      ],
+      "answer": "قريب"
+    },
+    {
+      "id": "en-a2-u01-v02",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "يعني إيه generous؟",
+      "options": [
+        "كريم",
+        "بخيل",
+        "عصبي",
+        "شجاع"
+      ],
+      "answer": "كريم"
+    },
+    {
+      "id": "en-a2-u01-v03",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "كلمة shy في الإنجليزي معناها:",
+      "options": [
+        "خجول",
+        "مضحك",
+        "متوتر",
+        "هادي"
+      ],
+      "answer": "خجول"
+    },
+    {
+      "id": "en-a2-u01-v04",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "كلمة cousin بتتقال على مين؟",
+      "options": [
+        "ابن أو بنت العم والخال",
+        "الأخ أو الأخت",
+        "الأب أو الأم",
+        "الجد أو الجدة"
+      ],
+      "answer": "ابن أو بنت العم والخال"
+    },
+    {
+      "id": "en-a2-u01-v05",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "إيه معنى funny؟",
+      "options": [
+        "مضحك",
+        "حزين",
+        "ممل",
+        "متوتر"
+      ],
+      "answer": "مضحك"
+    },
+    {
+      "id": "en-a2-u01-v06",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "كلمة nervous معناها:",
+      "options": [
+        "متوتر",
+        "فرحان",
+        "تعبان",
+        "كسول"
+      ],
+      "answer": "متوتر"
+    },
+    {
+      "id": "en-a2-u01-v07",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "لما تقول حاجة next to حاجة تانية، يعني:",
+      "options": [
+        "جنب",
+        "فوق",
+        "ورا",
+        "جوه"
+      ],
+      "answer": "جنب"
+    },
+    {
+      "id": "en-a2-u01-v08",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "معنى كلمة opposite في وصف الأماكن:",
+      "options": [
+        "قدام أو مقابل",
+        "جنب",
+        "ورا",
+        "بين"
+      ],
+      "answer": "قدام أو مقابل"
+    },
+    {
+      "id": "en-a2-u01-g01",
+      "kind": "grammar",
+      "difficulty": 1,
+      "prompt": "اختار الترتيب الصح لبداية السؤال ده: \"_____ any brothers or sisters?\"",
+      "options": [
+        "Do you have",
+        "Have you do",
+        "You have",
+        "Do have you"
+      ],
+      "answer": "Do you have"
+    },
+    {
+      "id": "en-a2-u01-g02",
+      "kind": "grammar",
+      "difficulty": 1,
+      "prompt": "اختار الفعل بالشكل المظبوط: \"My cousin _____ in a bank.\"",
+      "options": [
+        "works",
+        "work",
+        "is work",
+        "working"
+      ],
+      "answer": "works"
+    },
+    {
+      "id": "en-a2-u01-g03",
+      "kind": "grammar",
+      "difficulty": 1,
+      "prompt": "اختار الشكل الصح عشان تعبّر عن حاجة بتحصل دلوقتي: \"They _____ for the bus at the moment.\"",
+      "options": [
+        "are waiting",
+        "wait",
+        "waits",
+        "is waiting"
+      ],
+      "answer": "are waiting"
+    },
+    {
+      "id": "en-a2-u01-s01",
+      "kind": "speaking",
+      "difficulty": 1,
+      "prompt": "اسأل زميلك الجديد هو ساكن فين.",
+      "answer": "Where do you live?"
+    },
+    {
+      "id": "en-a2-u01-s02",
+      "kind": "speaking",
+      "difficulty": 1,
+      "prompt": "عرّف ابن عمك لواحد صاحبك وقل إنه خجول جداً.",
+      "answer": "This is my cousin, he is very shy."
+    },
+    {
+      "id": "en-a2-u01-l01",
+      "kind": "listening",
+      "difficulty": 1,
+      "prompt": "اسمع الجملة واختار المعنى المظبوط:",
+      "text": "My cousin is very generous.",
+      "options": [
+        "ابن عمي كريم جداً.",
+        "ابن عمي خجول جداً.",
+        "أخويا متوتر جداً.",
+        "صاحبي مضحك جداً."
+      ],
+      "answer": "ابن عمي كريم جداً."
+    },
+    {
+      "id": "en-a2-u01-v09",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "اختار الكلمة الصح: He gives everyone gifts. He is very _____.",
+      "options": [
+        "generous",
+        "shy",
+        "nervous",
+        "funny"
+      ],
+      "answer": "generous"
+    },
+    {
+      "id": "en-a2-u01-v10",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "اختار الكلمة المناسبة: She doesn't like speaking to strangers because she is _____.",
+      "options": [
+        "shy",
+        "generous",
+        "funny",
+        "relative"
+      ],
+      "answer": "shy"
+    },
+    {
+      "id": "en-a2-u01-v11",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "اختار الكلمة الصح: My uncle's son is my _____.",
+      "options": [
+        "cousin",
+        "relative",
+        "funny",
+        "like"
+      ],
+      "answer": "cousin"
+    },
+    {
+      "id": "en-a2-u01-v12",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "اختار الكلمة الصح: The hotel is _____ the train station, just across the street.",
+      "options": [
+        "opposite",
+        "cousin",
+        "generous",
+        "shy"
+      ],
+      "answer": "opposite"
+    },
+    {
+      "id": "en-a2-u01-v13",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "اختار التعبير الصح: I have many hobbies, _____, reading and music.",
+      "options": [
+        "for example",
+        "next to",
+        "opposite",
+        "generous"
+      ],
+      "answer": "for example"
+    },
+    {
+      "id": "en-a2-u01-g04",
+      "kind": "grammar",
+      "difficulty": 2,
+      "prompt": "اختار التكوين الصح للسؤال: \"Where _____ work?\"",
+      "options": [
+        "do you",
+        "you do",
+        "are you",
+        "you"
+      ],
+      "answer": "do you"
+    },
+    {
+      "id": "en-a2-u01-g05",
+      "kind": "grammar",
+      "difficulty": 2,
+      "prompt": "اختار النفي الصح في الجملة دي: \"He is shy, so he _____ talk much.\"",
+      "options": [
+        "doesn't",
+        "don't",
+        "isn't",
+        "not"
+      ],
+      "answer": "doesn't"
+    },
+    {
+      "id": "en-a2-u01-g06",
+      "kind": "grammar",
+      "difficulty": 2,
+      "prompt": "كمّل الجملة دي بالزمن المناسب: \"I can't talk right now because I _____.\"",
+      "options": [
+        "am studying",
+        "study",
+        "studies",
+        "am study"
+      ],
+      "answer": "am studying"
+    },
+    {
+      "id": "en-a2-u01-g07",
+      "kind": "grammar",
+      "difficulty": 2,
+      "prompt": "اختار أداة الوصل الصح لوصف شخص: \"A cousin is a person _____ is your aunt's child.\"",
+      "options": [
+        "who",
+        "which",
+        "where",
+        "what"
+      ],
+      "answer": "who"
+    },
+    {
+      "id": "en-a2-u01-g08",
+      "kind": "grammar",
+      "difficulty": 2,
+      "prompt": "اختار أداة الوصل المناسبة لوصف شيء غير عاقل: \"This is a funny book _____ makes me laugh.\"",
+      "options": [
+        "which",
+        "who",
+        "where",
+        "whose"
+      ],
+      "answer": "which"
+    },
+    {
+      "id": "en-a2-u01-s03",
+      "kind": "speaking",
+      "difficulty": 2,
+      "prompt": "حد بيسألك بتعمل إيه دلوقتي، قول له إنك بتذاكر إنجليزي.",
+      "answer": "I am studying English right now."
+    },
+    {
+      "id": "en-a2-u01-s04",
+      "kind": "speaking",
+      "difficulty": 2,
+      "prompt": "اسأل صاحبك لو عنده أي إخوات ولاد.",
+      "answer": "Do you have any brothers?"
+    },
+    {
+      "id": "en-a2-u01-s05",
+      "kind": "speaking",
+      "difficulty": 2,
+      "prompt": "اوصف صاحبك وقل إنه شخص مضحك وكريم جداً.",
+      "answer": "My friend is funny and very generous."
+    },
+    {
+      "id": "en-a2-u01-l02",
+      "kind": "listening",
+      "difficulty": 2,
+      "prompt": "اسمع الجملة واختار المعنى الصح:",
+      "text": "The bank is opposite the school.",
+      "options": [
+        "البنك قدام المدرسة.",
+        "البنك جنب المدرسة.",
+        "البنك ورا المدرسة.",
+        "البنك بعيد عن المدرسة."
+      ],
+      "answer": "البنك قدام المدرسة."
+    },
+    {
+      "id": "en-a2-u01-v14",
+      "kind": "vocab",
+      "difficulty": 3,
+      "prompt": "اختار الكلمة المناسبة: He is very tall, _____ his father.",
+      "options": [
+        "like",
+        "cousin",
+        "nervous",
+        "for example"
+      ],
+      "answer": "like"
+    },
+    {
+      "id": "en-a2-u01-g09",
+      "kind": "grammar",
+      "difficulty": 3,
+      "prompt": "اختار السؤال المترتب صح في المضارع المستمر:",
+      "options": [
+        "What are you doing right now?",
+        "What you are doing right now?",
+        "What doing you are right now?",
+        "What are doing you right now?"
+      ],
+      "answer": "What are you doing right now?"
+    },
+    {
+      "id": "en-a2-u01-g10",
+      "kind": "grammar",
+      "difficulty": 3,
+      "prompt": "اختار التكملة الصح للجملة: \"I like people who _____ funny and generous.\"",
+      "options": [
+        "are",
+        "is",
+        "being",
+        "am"
+      ],
+      "answer": "are"
+    },
+    {
+      "id": "en-a2-u01-s06",
+      "kind": "speaking",
+      "difficulty": 3,
+      "prompt": "قول إن قريبك قاعد جنبك دلوقتي ومستني.",
+      "answer": "My relative is sitting next to me and waiting."
+    },
+    {
+      "id": "en-a2-u01-s07",
+      "kind": "speaking",
+      "difficulty": 3,
+      "prompt": "اوصف أختك باستخدام أداة وصل، وقول إنها شخص بيخليني أضحك.",
+      "answer": "She is a person who makes me laugh."
+    },
+    {
+      "id": "en-a2-u01-s08",
+      "kind": "speaking",
+      "difficulty": 3,
+      "prompt": "قول إن أخوك متوتر دلوقتي زي ابن عمه.",
+      "answer": "My brother is nervous now, like his cousin."
+    },
+    {
+      "id": "en-a2-u01-l03",
+      "kind": "listening",
+      "difficulty": 3,
+      "prompt": "اسمع الجملة واختار الترجمة المظبوطة:",
+      "text": "They are waiting next to the car right now.",
+      "options": [
+        "هما مستنيين جنب العربية دلوقتي.",
+        "هما بيشتغلوا في العربية دلوقتي.",
+        "هما واقفين قدام العربية دايماً.",
+        "هما بيدوروا على العربية دلوقتي."
+      ],
+      "answer": "هما مستنيين جنب العربية دلوقتي."
+    }
+  ]
+};
