@@ -1,8 +1,13 @@
 "use server";
 
+import type { Flashcard } from "@/lib/lessons/summary-content";
+import {
+  readSummaryPhrase,
+  readSummaryWord,
+} from "@/lib/lessons/summary-content";
 import { createClient } from "@/lib/supabase/server";
 
-export async function getFlashcards() {
+export async function getFlashcards(): Promise<Flashcard[]> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -20,23 +25,38 @@ export async function getFlashcards() {
 
   if (!data) return [];
 
-  const cards = new Map<string, { term: string; type: "word" | "phrase" }>();
+  const cards = new Map<string, Flashcard>();
 
   for (const row of data) {
     const words = Array.isArray(row.words) ? row.words : [];
     const phrases = Array.isArray(row.phrases) ? row.phrases : [];
 
-    for (const w of words) {
-      const term = typeof w === "string" ? w.trim() : JSON.stringify(w);
-      if (!term) continue;
-      const key = term.toLowerCase();
-      if (!cards.has(key)) cards.set(key, { term, type: "word" });
+    for (const raw of words) {
+      const word = readSummaryWord(raw);
+      if (!word) continue;
+      const key = `w:${word.term.toLowerCase()}`;
+      if (!cards.has(key)) {
+        cards.set(key, {
+          term: word.term,
+          meaning: word.meaning,
+          example: word.example,
+          type: "word",
+        });
+      }
     }
-    for (const p of phrases) {
-      const term = typeof p === "string" ? p.trim() : JSON.stringify(p);
-      if (!term) continue;
-      const key = term.toLowerCase();
-      if (!cards.has(key)) cards.set(key, { term, type: "phrase" });
+
+    for (const raw of phrases) {
+      const phrase = readSummaryPhrase(raw);
+      if (!phrase) continue;
+      const key = `p:${phrase.phrase.toLowerCase()}`;
+      if (!cards.has(key)) {
+        cards.set(key, {
+          term: phrase.phrase,
+          meaning: phrase.meaning,
+          example: "",
+          type: "phrase",
+        });
+      }
     }
   }
 

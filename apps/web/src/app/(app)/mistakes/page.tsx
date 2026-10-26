@@ -9,7 +9,8 @@ export const metadata = {
 
 async function MistakesContent() {
   const mistakes = await getMistakes();
-  const hasAny = mistakes.words.length || mistakes.phrases.length || mistakes.grammar.length;
+  const hasAny =
+    mistakes.words.length || mistakes.phrases.length || mistakes.grammar.length;
 
   return !hasAny ? (
     <div className="rounded-organic border border-border bg-card px-6 py-10 text-center">
@@ -28,9 +29,24 @@ async function MistakesContent() {
         <section className="flex flex-col gap-3">
           <h2 className="text-lg font-semibold">كلمات جديدة</h2>
           <div className="grid gap-2 sm:grid-cols-2">
-            {mistakes.words.map((w, i) => (
-              <div key={i} className="rounded-organic border border-border bg-card px-4 py-3 text-sm">
-                {typeof w === "string" ? w : JSON.stringify(w)}
+            {mistakes.words.map((word) => (
+              <div
+                key={word.term}
+                className="rounded-organic border border-border bg-card px-4 py-3 text-sm"
+              >
+                <p className="font-semibold" dir="auto">
+                  {word.term}
+                </p>
+                {word.meaning ? (
+                  <p className="mt-0.5 text-muted" dir="auto">
+                    {word.meaning}
+                  </p>
+                ) : null}
+                {word.example ? (
+                  <p className="mt-1 text-xs text-muted" dir="ltr">
+                    {word.example}
+                  </p>
+                ) : null}
               </div>
             ))}
           </div>
@@ -40,9 +56,19 @@ async function MistakesContent() {
         <section className="flex flex-col gap-3">
           <h2 className="text-lg font-semibold">عبارات مفيدة</h2>
           <div className="grid gap-2">
-            {mistakes.phrases.map((p, i) => (
-              <div key={i} className="rounded-organic border border-border bg-card px-4 py-3 text-sm">
-                {typeof p === "string" ? p : JSON.stringify(p)}
+            {mistakes.phrases.map((phrase) => (
+              <div
+                key={phrase.phrase}
+                className="rounded-organic border border-border bg-card px-4 py-3 text-sm"
+              >
+                <p className="font-semibold" dir="auto">
+                  {phrase.phrase}
+                </p>
+                {phrase.meaning ? (
+                  <p className="mt-0.5 text-muted" dir="auto">
+                    {phrase.meaning}
+                  </p>
+                ) : null}
               </div>
             ))}
           </div>
@@ -52,9 +78,24 @@ async function MistakesContent() {
         <section className="flex flex-col gap-3">
           <h2 className="text-lg font-semibold">قواعد وملاحظات</h2>
           <div className="grid gap-2">
-            {mistakes.grammar.map((g, i) => (
-              <div key={i} className="rounded-organic border border-border bg-card px-4 py-3 text-sm">
-                {typeof g === "string" ? g : JSON.stringify(g)}
+            {mistakes.grammar.map((point) => (
+              <div
+                key={point.point}
+                className="rounded-organic border border-border bg-card px-4 py-3 text-sm"
+              >
+                <p className="font-semibold" dir="auto">
+                  {point.point}
+                </p>
+                {point.explanation ? (
+                  <p className="mt-0.5 text-muted" dir="auto">
+                    {point.explanation}
+                  </p>
+                ) : null}
+                {point.example ? (
+                  <p className="mt-1 text-xs text-muted" dir="ltr">
+                    {point.example}
+                  </p>
+                ) : null}
               </div>
             ))}
           </div>

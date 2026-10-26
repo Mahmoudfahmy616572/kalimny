@@ -48,9 +48,6 @@ export async function POST(request: Request): Promise<NextResponse> {
   } catch (error) {
     const message = error instanceof Error ? error.message : "unknown error";
     console.error("[exam] submit failed:", message);
-    if (message.includes("attempt limit reached")) {
-      return NextResponse.json({ error: "attempt_limit" }, { status: 429 });
-    }
     return NextResponse.json({ error: "submit_failed" }, { status: 500 });
   }
 }

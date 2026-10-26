@@ -1,3 +1,4 @@
+import { revalidateTag } from "next/cache";
 import { NextResponse, after } from "next/server";
 
 import { endLesson, voidLesson } from "@/lib/lessons/quota";
@@ -129,12 +130,59 @@ export async function POST(request: Request): Promise<NextResponse> {
     if (body.void) {
       const result = await voidLesson(body.sessionId);
       return NextResponse.json(
-        { ok: true, voided: true, account: result.account, summaryStatus: "none" },
+        {
+          ok: true,
+          voided: true,
+          account: result.account,
+          summaryStatus: "none",
+          xp: null,
+        },
         { headers: { "cache-control": "no-store" } },
       );
     }
 
     const result = await endLesson(body.sessionId, body.usedSeconds);
+
+    /**
+     * XP بقى من السيرفر ومرة واحدة لكل جلسة: الدالة بتقرا الدقايق من
+     * الجلسة نفسها وبتمنع التكرار بـ primary key على session_id. النداء
+     * الآمن ده بيخلّي إعادة الإنهاء (أو قفل الصفحة) ما تديش XP تاني.
+     */
+    let xp: { xp: number; streak: number; gained: number } | null = null;
+    if (result.ok) {
+      try {
+        const { data: xpRows, error: xpError } = await supabase.rpc(
+          "award_xp_for_session",
+          { p_session_id: body.sessionId },
+        );
+        if (xpError) {
+          console.error("[voice/lesson/end] xp failed:", xpError.message);
+        } else {
+          const row = (Array.isArray(xpRows) ? xpRows[0] : xpRows) as
+            | { xp?: number; streak?: number; gained?: number; awarded?: boolean }
+            | null;
+          if (row) {
+            xp = {
+              xp: Number(row.xp ?? 0),
+              streak: Number(row.streak ?? 0),
+              gained: Number(row.gained ?? 0),
+            };
+            if (row.awarded) {
+              // Route Handler مش Server Action، فـ updateTag مش متاحة.
+              // expire: 0 = الطلب الجاي يستنى الـ revalidation بدل ما يشوف
+              // الستريك القديم مرة واحدة.
+              revalidateTag(`xp:${user.id}`, { expire: 0 });
+            }
+          }
+        }
+      } catch (xpFailure) {
+        // فشل منح XP ما يكسرش تسوية الرصيد — الجلسة هتتعالج في النداء الجاي.
+        console.error(
+          "[voice/lesson/end] xp failed:",
+          xpFailure instanceof Error ? xpFailure.message : xpFailure,
+        );
+      }
+    }
 
     /**
      * حالة الملخص اللي بيرجع للواجهة:
@@ -174,7 +222,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     }
 
     return NextResponse.json(
-      { ...result, summaryStatus },
+      { ...result, summaryStatus, xp },
       { headers: { "cache-control": "no-store" } },
     );
   } catch (error) {

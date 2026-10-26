@@ -47,7 +47,7 @@ const OUTCOME_COPY: Record<
   },
   partial: {
     title: "قربت خالص 👏",
-    body: "عدّيت جزء من الاختبار. راجع النقط اللي غلطت فيها، وبعدين جرّب الاختبار تاني.",
+    body: "عدّيت جزء من الاختبار. راجع النقط اللي غلطت فيها، وخد جلسة تانية على نفس الوحدة، وبعدها ارجع للاختبار.",
     tone: "border-terracotta/40 bg-terracotta-soft/30",
   },
   fail: {
@@ -158,10 +158,6 @@ export function ExamPanel({ sessionId }: { sessionId: string }) {
       if (!response.ok || "error" in data) {
         if ("error" in data && data.error === "already_submitted") {
           setError("الاختبار ده اتسلّم قبل كده.");
-        } else if ("error" in data && data.error === "attempt_limit") {
-          setError(
-            "محاولاتك على الوحدة دي خلصت. خد جلسة تانية على نفس الوحدة، وبعدها ارجع للاختبار.",
-          );
         } else {
           setError("مش قادرين نسجّل نتيجتك دلوقتي. جرّب تاني.");
         }
@@ -187,9 +183,7 @@ export function ExamPanel({ sessionId }: { sessionId: string }) {
         </p>
         <p className="mt-1 text-xs text-muted">
           {result.correct} من {result.total} صح
-          {result.outcome !== "pass" && result.attempts < 3
-            ? ` · فاضل ${3 - result.attempts} محاولة`
-            : ""}
+          {result.outcome !== "pass" ? ` · محاولة ${result.attempts}` : ""}
         </p>
         <Link
           href="/"
