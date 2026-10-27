@@ -1246,5 +1246,421 @@
         "answer": "دي أكتر مدينة ودودة شفتها في حياتي."
       }
     ]
+  },
+  "en-a2-u02": {
+    "model": "gemini-flash-lite-latest",
+    "generatedAt": "2026-10-24T14:53:54.696Z",
+    "questions": [
+      {
+        "id": "en-a2-u02-v01",
+        "kind": "vocab",
+        "difficulty": 1,
+        "prompt": "إيه معنى كلمة holiday بالعربي؟",
+        "options": [
+          "إجازة",
+          "رحلة",
+          "تأخير",
+          "بوابة"
+        ],
+        "answer": "إجازة"
+      },
+      {
+        "id": "en-a2-u02-v02",
+        "kind": "vocab",
+        "difficulty": 1,
+        "prompt": "إيه معنى كلمة trip بالعربي؟",
+        "options": [
+          "إجازة",
+          "رحلة",
+          "يفوّت",
+          "يوصل"
+        ],
+        "answer": "رحلة"
+      },
+      {
+        "id": "en-a2-u02-v03",
+        "kind": "vocab",
+        "difficulty": 1,
+        "prompt": "إيه معنى كلمة delay بالعربي؟",
+        "options": [
+          "بوابة",
+          "في وقتها",
+          "تأخير",
+          "إجازة"
+        ],
+        "answer": "تأخير"
+      },
+      {
+        "id": "en-a2-u02-v04",
+        "kind": "vocab",
+        "difficulty": 1,
+        "prompt": "إيه معنى كلمة miss بالعربي؟",
+        "options": [
+          "يوصل",
+          "يفوّت",
+          "تأخير",
+          "رحلة"
+        ],
+        "answer": "يفوّت"
+      },
+      {
+        "id": "en-a2-u02-v05",
+        "kind": "vocab",
+        "difficulty": 1,
+        "prompt": "إيه معنى كلمة arrive بالعربي؟",
+        "options": [
+          "يوصل",
+          "يفوّت",
+          "إجازة",
+          "بوابة"
+        ],
+        "answer": "يوصل"
+      },
+      {
+        "id": "en-a2-u02-g01",
+        "kind": "grammar",
+        "difficulty": 1,
+        "prompt": "اختر الماضي البسيط الصح للفعل go:",
+        "options": [
+          "went",
+          "goed",
+          "going",
+          "goes"
+        ],
+        "answer": "went"
+      },
+      {
+        "id": "en-a2-u02-g02",
+        "kind": "grammar",
+        "difficulty": 1,
+        "prompt": "اختر الفعل الصح في الماضي البسيط: I ... a nice movie yesterday.",
+        "options": [
+          "saw",
+          "see",
+          "seen",
+          "seeing"
+        ],
+        "answer": "saw"
+      },
+      {
+        "id": "en-a2-u02-g03",
+        "kind": "grammar",
+        "difficulty": 1,
+        "prompt": "اختر حرف الجر الصح: My birthday is ... May.",
+        "options": [
+          "in",
+          "on",
+          "at",
+          "to"
+        ],
+        "answer": "in"
+      },
+      {
+        "id": "en-a2-u02-s01",
+        "kind": "speaking",
+        "difficulty": 1,
+        "prompt": "قول بالانجليزي: أنا وصلت المطار.",
+        "answer": "I arrived at the airport."
+      },
+      {
+        "id": "en-a2-u02-s02",
+        "kind": "speaking",
+        "difficulty": 1,
+        "prompt": "اسأل زميلك بالانجليزي: استمتعت بالإجازة؟",
+        "answer": "Did you enjoy the holiday?"
+      },
+      {
+        "id": "en-a2-u02-l01",
+        "kind": "listening",
+        "difficulty": 1,
+        "prompt": "اسمع الجملة واختار معناها بالعربي:",
+        "text": "I missed the bus.",
+        "options": [
+          "فاتني الأتوبيس.",
+          "وصلت الأتوبيس.",
+          "أنا شفت الأتوبيس.",
+          "الإجازة خلصت."
+        ],
+        "answer": "فاتني الأتوبيس."
+      },
+      {
+        "id": "en-a2-u02-v06",
+        "kind": "vocab",
+        "difficulty": 2,
+        "prompt": "إيه معنى 'at the time' بالعربي؟",
+        "options": [
+          "في وقتها",
+          "وقت دقيق",
+          "مكان مفتوح",
+          "تأخير كبير"
+        ],
+        "answer": "في وقتها"
+      },
+      {
+        "id": "en-a2-u02-v07",
+        "kind": "vocab",
+        "difficulty": 2,
+        "prompt": "كلمة 'at' بتعبر عن إيه؟",
+        "options": [
+          "(وقت/مكان دقيق)",
+          "(شهر/سنة/مكان مفتوح)",
+          "(يوم/تاريخ)",
+          "رحلة طويلة"
+        ],
+        "answer": "(وقت/مكان دقيق)"
+      },
+      {
+        "id": "en-a2-u02-v08",
+        "kind": "vocab",
+        "difficulty": 2,
+        "prompt": "كلمة 'in' بتستخدم مع إيه؟",
+        "options": [
+          "(شهر/سنة/مكان مفتوح)",
+          "(وقت/مكان دقيق)",
+          "(يوم/تاريخ)",
+          "بوابة المطار"
+        ],
+        "answer": "(شهر/سنة/مكان مفتوح)"
+      },
+      {
+        "id": "en-a2-u02-v09",
+        "kind": "vocab",
+        "difficulty": 2,
+        "prompt": "كلمة 'on' بتيجي مع إيه؟",
+        "options": [
+          "(يوم/تاريخ)",
+          "(وقت/مكان دقيق)",
+          "(شهر/سنة/مكان مفتوح)",
+          "إجازة سعيدة"
+        ],
+        "answer": "(يوم/تاريخ)"
+      },
+      {
+        "id": "en-a2-u02-v10",
+        "kind": "vocab",
+        "difficulty": 2,
+        "prompt": "إيه معنى كلمة gate بالعربي؟",
+        "options": [
+          "بوابة (مطار)",
+          "إجازة",
+          "رحلة",
+          "تأخير"
+        ],
+        "answer": "بوابة (مطار)"
+      },
+      {
+        "id": "en-a2-u02-g04",
+        "kind": "grammar",
+        "difficulty": 2,
+        "prompt": "اختر حرف الجر الصح: We arrived ... Monday.",
+        "options": [
+          "on",
+          "in",
+          "at",
+          "to"
+        ],
+        "answer": "on"
+      },
+      {
+        "id": "en-a2-u02-g05",
+        "kind": "grammar",
+        "difficulty": 2,
+        "prompt": "اختر الفعل الصح في الماضي المستمر: She ... walking when it started to rain.",
+        "options": [
+          "was",
+          "were",
+          "is",
+          "did"
+        ],
+        "answer": "was"
+      },
+      {
+        "id": "en-a2-u02-g06",
+        "kind": "grammar",
+        "difficulty": 2,
+        "prompt": "اختر حرف الجر الصح: The plane left ... six o'clock.",
+        "options": [
+          "at",
+          "in",
+          "on",
+          "by"
+        ],
+        "answer": "at"
+      },
+      {
+        "id": "en-a2-u02-s03",
+        "kind": "speaking",
+        "difficulty": 2,
+        "prompt": "قول بالانجليزي: فاتني الأتوبيس، فمشيت للبيت.",
+        "answer": "I missed the bus, so I walked home."
+      },
+      {
+        "id": "en-a2-u02-s04",
+        "kind": "speaking",
+        "difficulty": 2,
+        "prompt": "قول بالانجليزي: وصلنا يوم الاتنين الساعة ستة.",
+        "answer": "We arrived on Monday at six o'clock."
+      },
+      {
+        "id": "en-a2-u02-s05",
+        "kind": "speaking",
+        "difficulty": 2,
+        "prompt": "قول بالانجليزي: كنا مستنيين عند البوابة.",
+        "answer": "We were waiting at the gate."
+      },
+      {
+        "id": "en-a2-u02-l02",
+        "kind": "listening",
+        "difficulty": 2,
+        "prompt": "اسمع الجملة واختار معناها الصحيح:",
+        "text": "We arrived on Monday at six o'clock.",
+        "options": [
+          "وصلنا يوم الاتنين الساعة ستة.",
+          "مشينا يوم الاتنين الساعة سبعة.",
+          "وصلنا يوم الحد الساعة خمسة.",
+          "إحنا سافرنا في إجازة."
+        ],
+        "answer": "وصلنا يوم الاتنين الساعة ستة."
+      },
+      {
+        "id": "en-a2-u02-v11",
+        "kind": "vocab",
+        "difficulty": 3,
+        "prompt": "اختر الكلمة الصح عشان تكمل الجملة: We had a great ... in Cairo.",
+        "options": [
+          "holiday",
+          "delay",
+          "gate",
+          "at the time"
+        ],
+        "answer": "holiday"
+      },
+      {
+        "id": "en-a2-u02-v12",
+        "kind": "vocab",
+        "difficulty": 3,
+        "prompt": "اختر الكلمة الصح عشان تكمل الجملة: The train had a big ... so we waited.",
+        "options": [
+          "delay",
+          "trip",
+          "holiday",
+          "arrive"
+        ],
+        "answer": "delay"
+      },
+      {
+        "id": "en-a2-u02-v13",
+        "kind": "vocab",
+        "difficulty": 3,
+        "prompt": "اختر الكلمة الصح عشان تكمل الجملة: Please ... at the station early.",
+        "options": [
+          "arrive",
+          "miss",
+          "delay",
+          "gate"
+        ],
+        "answer": "arrive"
+      },
+      {
+        "id": "en-a2-u02-v14",
+        "kind": "vocab",
+        "difficulty": 3,
+        "prompt": "اختر الكلمة الصح عشان تكمل الجملة: Stand near ... number four.",
+        "options": [
+          "gate",
+          "holiday",
+          "trip",
+          "arrive"
+        ],
+        "answer": "gate"
+      },
+      {
+        "id": "en-a2-u02-g07",
+        "kind": "grammar",
+        "difficulty": 3,
+        "prompt": "اختر الجملة الصح بالماضي البسيط والمستمر:",
+        "options": [
+          "I was walking when I saw my friend.",
+          "I walked when I was seeing my friend.",
+          "I was walk when I saw my friend.",
+          "I walked when I see my friend."
+        ],
+        "answer": "I was walking when I saw my friend."
+      },
+      {
+        "id": "en-a2-u02-g08",
+        "kind": "grammar",
+        "difficulty": 3,
+        "prompt": "اختر الجملة الصح في تكوين الماضي:",
+        "options": [
+          "We had a wonderful trip last week.",
+          "We have a wonderful trip last week.",
+          "We having a wonderful trip last week.",
+          "We has a wonderful trip last week."
+        ],
+        "answer": "We had a wonderful trip last week."
+      },
+      {
+        "id": "en-a2-u02-g09",
+        "kind": "grammar",
+        "difficulty": 3,
+        "prompt": "اختر الجملة اللي فيها حروف جر صحيحة:",
+        "options": [
+          "They arrived in Cairo on Monday at five.",
+          "They arrived at Cairo in Monday on five.",
+          "They arrived on Cairo at Monday in five.",
+          "They arrived in Cairo at Monday on five."
+        ],
+        "answer": "They arrived in Cairo on Monday at five."
+      },
+      {
+        "id": "en-a2-u02-g10",
+        "kind": "grammar",
+        "difficulty": 3,
+        "prompt": "اختر التكملة الصح للماضي المستمر: They ... playing football when it rained.",
+        "options": [
+          "were",
+          "was",
+          "did",
+          "are"
+        ],
+        "answer": "were"
+      },
+      {
+        "id": "en-a2-u02-s06",
+        "kind": "speaking",
+        "difficulty": 3,
+        "prompt": "احكي بالانجليزي عن أسوأ رحلة: كنا مستنيين عند البوابة لما الرحلة اتلغت.",
+        "answer": "We were waiting at the gate when the flight was cancelled."
+      },
+      {
+        "id": "en-a2-u02-s07",
+        "kind": "speaking",
+        "difficulty": 3,
+        "prompt": "احكي موقف حصل في الماضي: أنا كنت ماشي في الشارع لما شوفت صاحبي.",
+        "answer": "I was walking in the street when I saw my friend."
+      },
+      {
+        "id": "en-a2-u02-s08",
+        "kind": "speaking",
+        "difficulty": 3,
+        "prompt": "احكي عن أحلى إجازة: ذهبت إلى إجازة رائعة في العام الماضي.",
+        "answer": "I went on a wonderful holiday last year."
+      },
+      {
+        "id": "en-a2-u02-l03",
+        "kind": "listening",
+        "difficulty": 3,
+        "prompt": "اسمع الجملة واختار معناها الدقيق:",
+        "text": "We were waiting at the gate when the flight was cancelled.",
+        "options": [
+          "كنا مستنيين عند البوابة لما الرحلة اتلغت.",
+          "وصلنا البوابة بعد ما الرحلة طارت.",
+          "إحنا فوتنا الطيارة في المطار.",
+          "الرحلة بدأت في وقتها المحدد."
+        ],
+        "answer": "كنا مستنيين عند البوابة لما الرحلة اتلغت."
+      }
+    ]
   }
 }

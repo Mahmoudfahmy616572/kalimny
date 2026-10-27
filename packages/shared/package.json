@@ -11,6 +11,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "check:syllabus": "node scripts/check-syllabus.mjs",
+    "check:exam-content": "node scripts/check-exam-content.mjs",
     "generate:exams": "node scripts/generate-exam-banks.mjs"
   },
   "devDependencies": {

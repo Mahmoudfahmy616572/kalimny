@@ -24,5 +24,5 @@ export function getSyllabusUnits(
   return SYLLABUS[language]?.[level];
 }
 
-export { EN_SYLLABUS };
+export { EN_SYLLABUS, FR_SYLLABUS, ES_SYLLABUS, DE_SYLLABUS };
 export * from "./types";

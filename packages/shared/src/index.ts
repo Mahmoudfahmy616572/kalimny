@@ -6,5 +6,5 @@ export * from "./lessons";
 export * from "./persona";
 export * from "./exams";
 export * from "./exam-selection";
-export * from "./exam-banks";
+export * from "./exam-library";
 export * from "./voice";

@@ -413,5 +413,1241 @@ export const EXAM_BANK_EN: Record<string, ExamQuestion[]> = {
       ],
       "answer": "هما مستنيين جنب العربية دلوقتي."
     }
+  ],
+  "en-a2-u05": [
+    {
+      "id": "en-a2-u05-v01",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "كلمة \"clothes\" معناها إيه بالعربي؟",
+      "options": [
+        "هدوم",
+        "جاكيت",
+        "مفاتيح",
+        "واجب"
+      ],
+      "answer": "هدوم"
+    },
+    {
+      "id": "en-a2-u05-v02",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "كلمة \"jacket\" معناها إيه بالعربي؟",
+      "options": [
+        "جاكيت",
+        "هدوم",
+        "مفتاح",
+        "سوشي"
+      ],
+      "answer": "جاكيت"
+    },
+    {
+      "id": "en-a2-u05-v03",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "يعني إيه \"expensive\"؟",
+      "options": [
+        "غالي",
+        "رخيص",
+        "قديم",
+        "جديد"
+      ],
+      "answer": "غالي"
+    },
+    {
+      "id": "en-a2-u05-v04",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "كلمة \"cheap\" معناها إيه؟",
+      "options": [
+        "رخيص",
+        "غالي",
+        "صعب",
+        "بعيد"
+      ],
+      "answer": "رخيص"
+    },
+    {
+      "id": "en-a2-u05-v05",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "يعني إيه كلمة \"argue\" بالعربي؟",
+      "options": [
+        "يتخانق",
+        "يعتذر",
+        "يجرب",
+        "يخلّص"
+      ],
+      "answer": "يتخانق"
+    },
+    {
+      "id": "en-a2-u05-g01",
+      "kind": "grammar",
+      "difficulty": 1,
+      "prompt": "اختار الفعل المساعد الصح: \"I _____ never tried sushi.\"",
+      "options": [
+        "have",
+        "has",
+        "did",
+        "am"
+      ],
+      "answer": "have"
+    },
+    {
+      "id": "en-a2-u05-g02",
+      "kind": "grammar",
+      "difficulty": 1,
+      "prompt": "اختار التصريف الصح للسؤال عن التجربة: \"Have you ever _____ to Alexandria?\"",
+      "options": [
+        "been",
+        "be",
+        "was",
+        "were"
+      ],
+      "answer": "been"
+    },
+    {
+      "id": "en-a2-u05-g03",
+      "kind": "grammar",
+      "difficulty": 1,
+      "prompt": "اختار الفعل الصح مع المفرد: \"He _____ never lost his keys.\"",
+      "options": [
+        "has",
+        "have",
+        "is",
+        "did"
+      ],
+      "answer": "has"
+    },
+    {
+      "id": "en-a2-u05-s01",
+      "kind": "speaking",
+      "difficulty": 1,
+      "prompt": "قول لصاحبك إنك عمرك ما رحت باريس قبل كده.",
+      "answer": "I have never been to Paris."
+    },
+    {
+      "id": "en-a2-u05-s02",
+      "kind": "speaking",
+      "difficulty": 1,
+      "prompt": "اسأل زميلك لو هو عمره في حياته ضيّع الجاكيت بتاعه.",
+      "answer": "Have you ever lost your jacket?"
+    },
+    {
+      "id": "en-a2-u05-s03",
+      "kind": "speaking",
+      "difficulty": 1,
+      "prompt": "قول لأخوك إنك ضيعت الجاكيت بتاعك إمبارح.",
+      "answer": "I lost my jacket yesterday."
+    },
+    {
+      "id": "en-a2-u05-l01",
+      "kind": "listening",
+      "difficulty": 1,
+      "prompt": "اسمع الجملة واختار معناها الصح بالعربي.",
+      "text": "These clothes are cheap.",
+      "options": [
+        "الهدوم دي رخيصة.",
+        "الهدوم دي غالية.",
+        "الجاكيت ده رخيص.",
+        "الجاكيت ده ضاع."
+      ],
+      "answer": "الهدوم دي رخيصة."
+    },
+    {
+      "id": "en-a2-u05-v06",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "اختار الكلمة الصح: \"These _____ are cheap.\"",
+      "options": [
+        "clothes",
+        "brother",
+        "homework",
+        "argue"
+      ],
+      "answer": "clothes"
+    },
+    {
+      "id": "en-a2-u05-v07",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "اختار الكلمة المناسبة: \"I lost my _____ yesterday.\"",
+      "options": [
+        "jacket",
+        "already",
+        "ever",
+        "yet"
+      ],
+      "answer": "jacket"
+    },
+    {
+      "id": "en-a2-u05-v08",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "اختار الكلمة المناسبة: \"This jacket is not cheap, it is _____.\"",
+      "options": [
+        "expensive",
+        "lost",
+        "finished",
+        "already"
+      ],
+      "answer": "expensive"
+    },
+    {
+      "id": "en-a2-u05-v09",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "اختار الكلمة الصح: \"These clothes are not expensive, they are _____.\"",
+      "options": [
+        "cheap",
+        "argue",
+        "yet",
+        "ever"
+      ],
+      "answer": "cheap"
+    },
+    {
+      "id": "en-a2-u05-v10",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "كلمة \"already\" بنستخدمها بمعنى إيه؟",
+      "options": [
+        "خلاص أو قبل كده",
+        "لسه",
+        "أبداً في السؤال",
+        "أمس"
+      ],
+      "answer": "خلاص أو قبل كده"
+    },
+    {
+      "id": "en-a2-u05-g04",
+      "kind": "grammar",
+      "difficulty": 2,
+      "prompt": "حددنا الوقت بكلمة \"yesterday\"، يبقى نختار إيه؟ \"I _____ my keys yesterday.\"",
+      "options": [
+        "lost",
+        "have lost",
+        "am losing",
+        "lose"
+      ],
+      "answer": "lost"
+    },
+    {
+      "id": "en-a2-u05-g05",
+      "kind": "grammar",
+      "difficulty": 2,
+      "prompt": "الأثر موجود دلوقتي من غير تحديد وقت، نختار إيه؟ \"I can't open the door. I _____ my keys.\"",
+      "options": [
+        "have lost",
+        "lost yesterday",
+        "did lost",
+        "losing"
+      ],
+      "answer": "have lost"
+    },
+    {
+      "id": "en-a2-u05-g06",
+      "kind": "grammar",
+      "difficulty": 2,
+      "prompt": "اختار الكلمة اللي مكانها بيجي بين have والتصريف التالت: \"I have _____ finished my homework.\"",
+      "options": [
+        "just",
+        "yet",
+        "ever",
+        "yesterday"
+      ],
+      "answer": "just"
+    },
+    {
+      "id": "en-a2-u05-g07",
+      "kind": "grammar",
+      "difficulty": 2,
+      "prompt": "اختار الكلمة الصح للتعبير عن إنجاز تم بالفعل: \"She has _____ called her brother.\"",
+      "options": [
+        "already",
+        "yet",
+        "ever",
+        "yesterday"
+      ],
+      "answer": "already"
+    },
+    {
+      "id": "en-a2-u05-s04",
+      "kind": "speaking",
+      "difficulty": 2,
+      "prompt": "قول لمامتك إنك خلاص كلمت أخوك.",
+      "answer": "I have already called my brother."
+    },
+    {
+      "id": "en-a2-u05-s05",
+      "kind": "speaking",
+      "difficulty": 2,
+      "prompt": "قول لصاحبك إنك لسه مكلّم أخوك حالا.",
+      "answer": "I have just called my brother."
+    },
+    {
+      "id": "en-a2-u05-s06",
+      "kind": "speaking",
+      "difficulty": 2,
+      "prompt": "قول لمدرسك إنك لسه ما خلصتش الواجب بتاعك لحد دلوقتي.",
+      "answer": "I haven't finished my homework yet."
+    },
+    {
+      "id": "en-a2-u05-l02",
+      "kind": "listening",
+      "difficulty": 2,
+      "prompt": "اسمع الجملة واختار المعنى المناسب ليها.",
+      "text": "I have already apologised to my brother.",
+      "options": [
+        "أنا خلاص اعتذرت لأخويا.",
+        "أنا لسه ما اعتذرتش لأخويا.",
+        "أنا اتخانقت مع أخويا إمبارح.",
+        "أنا كلمت أخويا لتوي."
+      ],
+      "answer": "أنا خلاص اعتذرت لأخويا."
+    },
+    {
+      "id": "en-a2-u05-v11",
+      "kind": "vocab",
+      "difficulty": 3,
+      "prompt": "اختار الكلمة الصح: \"I had to _____ to my brother.\"",
+      "options": [
+        "apologise",
+        "argue",
+        "clothes",
+        "cheap"
+      ],
+      "answer": "apologise"
+    },
+    {
+      "id": "en-a2-u05-v12",
+      "kind": "vocab",
+      "difficulty": 3,
+      "prompt": "اختار الكلمة الصح عشان تكمل السؤال: \"Have you finished your homework _____?\"",
+      "options": [
+        "yet",
+        "yesterday",
+        "expensive",
+        "clothes"
+      ],
+      "answer": "yet"
+    },
+    {
+      "id": "en-a2-u05-v13",
+      "kind": "vocab",
+      "difficulty": 3,
+      "prompt": "كلمة \"just\" في الجملة دي \"I've just finished\" بتدل على إيه؟",
+      "options": [
+        "لتوه / حالا",
+        "لسه ما حصلش خالص",
+        "من زمان جداً",
+        "أمس"
+      ],
+      "answer": "لتوه / حالا"
+    },
+    {
+      "id": "en-a2-u05-v14",
+      "kind": "vocab",
+      "difficulty": 3,
+      "prompt": "اختار الكلمة الصح عشان تسأل عن تجربة في الحياة: \"Have you _____ been to Paris?\"",
+      "options": [
+        "ever",
+        "yet",
+        "yesterday",
+        "cheap"
+      ],
+      "answer": "ever"
+    },
+    {
+      "id": "en-a2-u05-g08",
+      "kind": "grammar",
+      "difficulty": 3,
+      "prompt": "في النفي في آخر الجملة بنستخدم كلمة إيه؟ \"I haven't called my brother _____.\"",
+      "options": [
+        "yet",
+        "already",
+        "just",
+        "ever"
+      ],
+      "answer": "yet"
+    },
+    {
+      "id": "en-a2-u05-g09",
+      "kind": "grammar",
+      "difficulty": 3,
+      "prompt": "بعد \"Did\" في السؤال عن الماضي، الفعل يرجع لأصله: \"Did you _____ with your brother yesterday?\"",
+      "options": [
+        "argue",
+        "argued",
+        "arguing",
+        "have argued"
+      ],
+      "answer": "argue"
+    },
+    {
+      "id": "en-a2-u05-g10",
+      "kind": "grammar",
+      "difficulty": 3,
+      "prompt": "اختار الفعل الصح عشان فيه وقت محدد في الماضي: \"A: Have you called your brother? B: Yes, I _____ him yesterday.\"",
+      "options": [
+        "called",
+        "have called",
+        "call",
+        "calling"
+      ],
+      "answer": "called"
+    },
+    {
+      "id": "en-a2-u05-s07",
+      "kind": "speaking",
+      "difficulty": 3,
+      "prompt": "قول للبائع إن الجاكيت ده غالي بس الهدوم دي رخيصة.",
+      "answer": "This jacket is expensive, but these clothes are cheap."
+    },
+    {
+      "id": "en-a2-u05-s08",
+      "kind": "speaking",
+      "difficulty": 3,
+      "prompt": "قول لصاحبك إنك اتخانقت مع أخوك إمبارح واعتذرت له.",
+      "answer": "I argued with my brother yesterday and apologised."
+    },
+    {
+      "id": "en-a2-u05-l03",
+      "kind": "listening",
+      "difficulty": 3,
+      "prompt": "اسمع السؤال واختار معناه المظبوط.",
+      "text": "Have you ever lost your keys in Paris?",
+      "options": [
+        "هل عمرك ضيعت مفاتيحك في باريس؟",
+        "هل لقيت مفاتيحك في باريس إمبارح؟",
+        "هل اشتريت جاكيت من باريس قبل كده؟",
+        "هل سافرت باريس مع أخوك قبل كده؟"
+      ],
+      "answer": "هل عمرك ضيعت مفاتيحك في باريس؟"
+    }
+  ],
+  "en-a2-u06": [
+    {
+      "id": "en-a2-u06-v01",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "كلمة \"crowded\" معناها إيه بالعربي؟",
+      "options": [
+        "زحمة",
+        "هادي",
+        "سريع",
+        "جميل"
+      ],
+      "answer": "زحمة"
+    },
+    {
+      "id": "en-a2-u06-v02",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "يعني إيه \"spend time\"؟",
+      "options": [
+        "يقضي وقت",
+        "يضيّع وقت",
+        "يشتري حاجة",
+        "يوفر فلوس"
+      ],
+      "answer": "يقضي وقت"
+    },
+    {
+      "id": "en-a2-u06-v03",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "كلمة \"waste time\" معناها إيه؟",
+      "options": [
+        "يضيّع وقت",
+        "يقضي وقت",
+        "يسافر بسرعة",
+        "يوفر وقت"
+      ],
+      "answer": "يضيّع وقت"
+    },
+    {
+      "id": "en-a2-u06-v04",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "كلمة \"friendly\" معناها إيه؟",
+      "options": [
+        "ودود",
+        "دوشة",
+        "بطيء",
+        "عكس"
+      ],
+      "answer": "ودود"
+    },
+    {
+      "id": "en-a2-u06-v05",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "كلمة \"opposite\" معناها إيه؟",
+      "options": [
+        "عكس",
+        "نفس الشيء",
+        "جميل",
+        "زحمة"
+      ],
+      "answer": "عكس"
+    },
+    {
+      "id": "en-a2-u06-v06",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "يعني إيه كلمة \"noisy\"؟",
+      "options": [
+        "دوشة",
+        "هادي",
+        "بطيء",
+        "ودود"
+      ],
+      "answer": "دوشة"
+    },
+    {
+      "id": "en-a2-u06-v07",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "كلمة \"slow\" معناها إيه؟",
+      "options": [
+        "بطيء",
+        "سريع",
+        "دوشة",
+        "عكس"
+      ],
+      "answer": "بطيء"
+    },
+    {
+      "id": "en-a2-u06-g01",
+      "kind": "grammar",
+      "difficulty": 1,
+      "prompt": "اختار المقارنة الصح: \"Cairo is _____ than Alexandria.\"",
+      "options": [
+        "bigger",
+        "big",
+        "biggest",
+        "more big"
+      ],
+      "answer": "bigger"
+    },
+    {
+      "id": "en-a2-u06-g02",
+      "kind": "grammar",
+      "difficulty": 1,
+      "prompt": "اختار الكلمة الصح: \"This is the _____ day of my life.\"",
+      "options": [
+        "best",
+        "better",
+        "good",
+        "most good"
+      ],
+      "answer": "best"
+    },
+    {
+      "id": "en-a2-u06-s01",
+      "kind": "speaking",
+      "difficulty": 1,
+      "prompt": "قول بالانجليزي إن بيتك أكبر من بيتي.",
+      "answer": "My house is bigger than your house."
+    },
+    {
+      "id": "en-a2-u06-s02",
+      "kind": "speaking",
+      "difficulty": 1,
+      "prompt": "صاحبك بيسألك عن رأيك، قوله إن الإسكندرية هي أحسن مدينة.",
+      "answer": "Alexandria is the best city."
+    },
+    {
+      "id": "en-a2-u06-l01",
+      "kind": "listening",
+      "difficulty": 1,
+      "prompt": "اسمع الجملة واختار المعنى الصح بتاعها بالعربي:",
+      "text": "Cairo is more crowded than this quiet town.",
+      "options": [
+        "القاهرة أزحم من المدينة الهادية دي.",
+        "المدينة الهادية دي أزحم من القاهرة.",
+        "القاهرة أهدى من المدينة الزحمة دي.",
+        "القاهرة والمدينة دي هاديين زي بعض."
+      ],
+      "answer": "القاهرة أزحم من المدينة الهادية دي."
+    },
+    {
+      "id": "en-a2-u06-v08",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "اختار الكلمة المناسبة: \"The metro has too many people, it is very _____.\"",
+      "options": [
+        "crowded",
+        "quiet",
+        "slow",
+        "opposite"
+      ],
+      "answer": "crowded"
+    },
+    {
+      "id": "en-a2-u06-v09",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "اختار الكلمة الصح: \"Don't _____ on your phone when you have work.\"",
+      "options": [
+        "waste time",
+        "spend time",
+        "opposite",
+        "friendly"
+      ],
+      "answer": "waste time"
+    },
+    {
+      "id": "en-a2-u06-v10",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "اختار الكلمة المناسبة: \"Everyone in this village smiles; they are very _____.\"",
+      "options": [
+        "friendly",
+        "noisy",
+        "crowded",
+        "slow"
+      ],
+      "answer": "friendly"
+    },
+    {
+      "id": "en-a2-u06-v11",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "اختار الكلمة الصح: \"I love this park because it is peaceful and _____.\"",
+      "options": [
+        "quiet",
+        "noisy",
+        "crowded",
+        "waste time"
+      ],
+      "answer": "quiet"
+    },
+    {
+      "id": "en-a2-u06-v12",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "كمّل الجملة: \"He is a very _____ runner; nobody can catch him.\"",
+      "options": [
+        "fast",
+        "slow",
+        "opposite",
+        "crowded"
+      ],
+      "answer": "fast"
+    },
+    {
+      "id": "en-a2-u06-g03",
+      "kind": "grammar",
+      "difficulty": 2,
+      "prompt": "اختار التعبير الصح للمقارنة: \"This car is _____ that old one.\"",
+      "options": [
+        "more expensive than",
+        "expensive than",
+        "more expensive",
+        "as expensive than"
+      ],
+      "answer": "more expensive than"
+    },
+    {
+      "id": "en-a2-u06-g04",
+      "kind": "grammar",
+      "difficulty": 2,
+      "prompt": "عايزين نقول إن المترو سريع زي القطر: \"The metro is _____ the train.\"",
+      "options": [
+        "as fast as",
+        "as faster as",
+        "fast as",
+        "so fast as"
+      ],
+      "answer": "as fast as"
+    },
+    {
+      "id": "en-a2-u06-g05",
+      "kind": "grammar",
+      "difficulty": 2,
+      "prompt": "اختار التركيب المظبوط: \"This hotel is _____ the other one.\"",
+      "options": [
+        "less expensive than",
+        "less expensive",
+        "less than expensive",
+        "least expensive than"
+      ],
+      "answer": "less expensive than"
+    },
+    {
+      "id": "en-a2-u06-g06",
+      "kind": "grammar",
+      "difficulty": 2,
+      "prompt": "اختار صيغة التفضيل الصح: \"She is _____ person in our team.\"",
+      "options": [
+        "the friendliest",
+        "friendliest",
+        "the most friendly",
+        "the friendlier"
+      ],
+      "answer": "the friendliest"
+    },
+    {
+      "id": "en-a2-u06-s03",
+      "kind": "speaking",
+      "difficulty": 2,
+      "prompt": "قول لزميلك إن الأتوبيس مش سريع زي المترو.",
+      "answer": "The bus is not as fast as the metro."
+    },
+    {
+      "id": "en-a2-u06-s04",
+      "kind": "speaking",
+      "difficulty": 2,
+      "prompt": "قول بالانجليزي إنك بتحب تقضي وقت مع عيلتك.",
+      "answer": "I like to spend time with my family."
+    },
+    {
+      "id": "en-a2-u06-s05",
+      "kind": "speaking",
+      "difficulty": 2,
+      "prompt": "انصح صاحبك وقوله: ما تضيّعش وقتك على الموبايل.",
+      "answer": "Do not waste time on your phone."
+    },
+    {
+      "id": "en-a2-u06-l02",
+      "kind": "listening",
+      "difficulty": 2,
+      "prompt": "اسمع الجملة واختار معناها المظبوط:",
+      "text": "You waste time when you travel by slow train.",
+      "options": [
+        "أنت بتضيّع وقت لما بتسافر بالقطر البطيء.",
+        "أنت بتستمتع بوقتك لما بتسافر بالقطر السريع.",
+        "القطر البطيء بيوفر وقت كتير في السفر.",
+        "أنت بتقضي وقت لطيف في القطر الهادي."
+      ],
+      "answer": "أنت بتضيّع وقت لما بتسافر بالقطر البطيء."
+    },
+    {
+      "id": "en-a2-u06-v13",
+      "kind": "vocab",
+      "difficulty": 3,
+      "prompt": "كمّل الجملة: \"I like to _____ with my friends at the weekend.\"",
+      "options": [
+        "spend time",
+        "waste time",
+        "crowded",
+        "noisy"
+      ],
+      "answer": "spend time"
+    },
+    {
+      "id": "en-a2-u06-v14",
+      "kind": "vocab",
+      "difficulty": 3,
+      "prompt": "اختار الكلمة المناسبة: \"The view of the Nile at sunset is really _____.\"",
+      "options": [
+        "beautiful",
+        "noisy",
+        "waste time",
+        "slow"
+      ],
+      "answer": "beautiful"
+    },
+    {
+      "id": "en-a2-u06-g07",
+      "kind": "grammar",
+      "difficulty": 3,
+      "prompt": "اختار التكملة الصح للجملة: \"It is the best city I have _____ visited.\"",
+      "options": [
+        "ever",
+        "never",
+        "yet",
+        "already"
+      ],
+      "answer": "ever"
+    },
+    {
+      "id": "en-a2-u06-g08",
+      "kind": "grammar",
+      "difficulty": 3,
+      "prompt": "اختار الكلمة الصح لوصف أسوأ رحلة: \"That was the _____ trip ever.\"",
+      "options": [
+        "worst",
+        "worse",
+        "baddest",
+        "most bad"
+      ],
+      "answer": "worst"
+    },
+    {
+      "id": "en-a2-u06-g09",
+      "kind": "grammar",
+      "difficulty": 3,
+      "prompt": "اختار الكلمة الناقصة للمقارنة: \"This street is noisier _____ my street.\"",
+      "options": [
+        "than",
+        "then",
+        "that",
+        "as"
+      ],
+      "answer": "than"
+    },
+    {
+      "id": "en-a2-u06-g10",
+      "kind": "grammar",
+      "difficulty": 3,
+      "prompt": "اختار الشكل الصح للصفة مع as...as: \"The bus is not as _____ as the train.\"",
+      "options": [
+        "fast",
+        "faster",
+        "fastest",
+        "more fast"
+      ],
+      "answer": "fast"
+    },
+    {
+      "id": "en-a2-u06-s06",
+      "kind": "speaking",
+      "difficulty": 3,
+      "prompt": "قول إن الفندق ده أرخص من الفندق التاني.",
+      "answer": "This hotel is less expensive than that hotel."
+    },
+    {
+      "id": "en-a2-u06-s07",
+      "kind": "speaking",
+      "difficulty": 3,
+      "prompt": "قول إن ده أهدى مكان زرته في حياتك.",
+      "answer": "It is the quietest place I have ever visited."
+    },
+    {
+      "id": "en-a2-u06-s08",
+      "kind": "speaking",
+      "difficulty": 3,
+      "prompt": "احكي عن مشوار سيء وقول: ده كان أسوأ مشوار في حياتي.",
+      "answer": "This was the worst trip of my life."
+    },
+    {
+      "id": "en-a2-u06-l03",
+      "kind": "listening",
+      "difficulty": 3,
+      "prompt": "اسمع الجملة واختار معناها الصح:",
+      "text": "This is the friendliest city I have ever seen.",
+      "options": [
+        "دي أكتر مدينة ودودة شفتها في حياتي.",
+        "دي أسوأ مدينة زرتها في حياتي.",
+        "المدينة دي أقل لطفاً من اللي شفتها قبل كده.",
+        "أنا عمري ما شفت مدينة هادية كده."
+      ],
+      "answer": "دي أكتر مدينة ودودة شفتها في حياتي."
+    }
+  ],
+  "en-a2-u02": [
+    {
+      "id": "en-a2-u02-v01",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "إيه معنى كلمة holiday بالعربي؟",
+      "options": [
+        "إجازة",
+        "رحلة",
+        "تأخير",
+        "بوابة"
+      ],
+      "answer": "إجازة"
+    },
+    {
+      "id": "en-a2-u02-v02",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "إيه معنى كلمة trip بالعربي؟",
+      "options": [
+        "إجازة",
+        "رحلة",
+        "يفوّت",
+        "يوصل"
+      ],
+      "answer": "رحلة"
+    },
+    {
+      "id": "en-a2-u02-v03",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "إيه معنى كلمة delay بالعربي؟",
+      "options": [
+        "بوابة",
+        "في وقتها",
+        "تأخير",
+        "إجازة"
+      ],
+      "answer": "تأخير"
+    },
+    {
+      "id": "en-a2-u02-v04",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "إيه معنى كلمة miss بالعربي؟",
+      "options": [
+        "يوصل",
+        "يفوّت",
+        "تأخير",
+        "رحلة"
+      ],
+      "answer": "يفوّت"
+    },
+    {
+      "id": "en-a2-u02-v05",
+      "kind": "vocab",
+      "difficulty": 1,
+      "prompt": "إيه معنى كلمة arrive بالعربي؟",
+      "options": [
+        "يوصل",
+        "يفوّت",
+        "إجازة",
+        "بوابة"
+      ],
+      "answer": "يوصل"
+    },
+    {
+      "id": "en-a2-u02-g01",
+      "kind": "grammar",
+      "difficulty": 1,
+      "prompt": "اختر الماضي البسيط الصح للفعل go:",
+      "options": [
+        "went",
+        "goed",
+        "going",
+        "goes"
+      ],
+      "answer": "went"
+    },
+    {
+      "id": "en-a2-u02-g02",
+      "kind": "grammar",
+      "difficulty": 1,
+      "prompt": "اختر الفعل الصح في الماضي البسيط: I ... a nice movie yesterday.",
+      "options": [
+        "saw",
+        "see",
+        "seen",
+        "seeing"
+      ],
+      "answer": "saw"
+    },
+    {
+      "id": "en-a2-u02-g03",
+      "kind": "grammar",
+      "difficulty": 1,
+      "prompt": "اختر حرف الجر الصح: My birthday is ... May.",
+      "options": [
+        "in",
+        "on",
+        "at",
+        "to"
+      ],
+      "answer": "in"
+    },
+    {
+      "id": "en-a2-u02-s01",
+      "kind": "speaking",
+      "difficulty": 1,
+      "prompt": "قول بالانجليزي: أنا وصلت المطار.",
+      "answer": "I arrived at the airport."
+    },
+    {
+      "id": "en-a2-u02-s02",
+      "kind": "speaking",
+      "difficulty": 1,
+      "prompt": "اسأل زميلك بالانجليزي: استمتعت بالإجازة؟",
+      "answer": "Did you enjoy the holiday?"
+    },
+    {
+      "id": "en-a2-u02-l01",
+      "kind": "listening",
+      "difficulty": 1,
+      "prompt": "اسمع الجملة واختار معناها بالعربي:",
+      "text": "I missed the bus.",
+      "options": [
+        "فاتني الأتوبيس.",
+        "وصلت الأتوبيس.",
+        "أنا شفت الأتوبيس.",
+        "الإجازة خلصت."
+      ],
+      "answer": "فاتني الأتوبيس."
+    },
+    {
+      "id": "en-a2-u02-v06",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "إيه معنى 'at the time' بالعربي؟",
+      "options": [
+        "في وقتها",
+        "وقت دقيق",
+        "مكان مفتوح",
+        "تأخير كبير"
+      ],
+      "answer": "في وقتها"
+    },
+    {
+      "id": "en-a2-u02-v07",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "كلمة 'at' بتعبر عن إيه؟",
+      "options": [
+        "(وقت/مكان دقيق)",
+        "(شهر/سنة/مكان مفتوح)",
+        "(يوم/تاريخ)",
+        "رحلة طويلة"
+      ],
+      "answer": "(وقت/مكان دقيق)"
+    },
+    {
+      "id": "en-a2-u02-v08",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "كلمة 'in' بتستخدم مع إيه؟",
+      "options": [
+        "(شهر/سنة/مكان مفتوح)",
+        "(وقت/مكان دقيق)",
+        "(يوم/تاريخ)",
+        "بوابة المطار"
+      ],
+      "answer": "(شهر/سنة/مكان مفتوح)"
+    },
+    {
+      "id": "en-a2-u02-v09",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "كلمة 'on' بتيجي مع إيه؟",
+      "options": [
+        "(يوم/تاريخ)",
+        "(وقت/مكان دقيق)",
+        "(شهر/سنة/مكان مفتوح)",
+        "إجازة سعيدة"
+      ],
+      "answer": "(يوم/تاريخ)"
+    },
+    {
+      "id": "en-a2-u02-v10",
+      "kind": "vocab",
+      "difficulty": 2,
+      "prompt": "إيه معنى كلمة gate بالعربي؟",
+      "options": [
+        "بوابة (مطار)",
+        "إجازة",
+        "رحلة",
+        "تأخير"
+      ],
+      "answer": "بوابة (مطار)"
+    },
+    {
+      "id": "en-a2-u02-g04",
+      "kind": "grammar",
+      "difficulty": 2,
+      "prompt": "اختر حرف الجر الصح: We arrived ... Monday.",
+      "options": [
+        "on",
+        "in",
+        "at",
+        "to"
+      ],
+      "answer": "on"
+    },
+    {
+      "id": "en-a2-u02-g05",
+      "kind": "grammar",
+      "difficulty": 2,
+      "prompt": "اختر الفعل الصح في الماضي المستمر: She ... walking when it started to rain.",
+      "options": [
+        "was",
+        "were",
+        "is",
+        "did"
+      ],
+      "answer": "was"
+    },
+    {
+      "id": "en-a2-u02-g06",
+      "kind": "grammar",
+      "difficulty": 2,
+      "prompt": "اختر حرف الجر الصح: The plane left ... six o'clock.",
+      "options": [
+        "at",
+        "in",
+        "on",
+        "by"
+      ],
+      "answer": "at"
+    },
+    {
+      "id": "en-a2-u02-s03",
+      "kind": "speaking",
+      "difficulty": 2,
+      "prompt": "قول بالانجليزي: فاتني الأتوبيس، فمشيت للبيت.",
+      "answer": "I missed the bus, so I walked home."
+    },
+    {
+      "id": "en-a2-u02-s04",
+      "kind": "speaking",
+      "difficulty": 2,
+      "prompt": "قول بالانجليزي: وصلنا يوم الاتنين الساعة ستة.",
+      "answer": "We arrived on Monday at six o'clock."
+    },
+    {
+      "id": "en-a2-u02-s05",
+      "kind": "speaking",
+      "difficulty": 2,
+      "prompt": "قول بالانجليزي: كنا مستنيين عند البوابة.",
+      "answer": "We were waiting at the gate."
+    },
+    {
+      "id": "en-a2-u02-l02",
+      "kind": "listening",
+      "difficulty": 2,
+      "prompt": "اسمع الجملة واختار معناها الصحيح:",
+      "text": "We arrived on Monday at six o'clock.",
+      "options": [
+        "وصلنا يوم الاتنين الساعة ستة.",
+        "مشينا يوم الاتنين الساعة سبعة.",
+        "وصلنا يوم الحد الساعة خمسة.",
+        "إحنا سافرنا في إجازة."
+      ],
+      "answer": "وصلنا يوم الاتنين الساعة ستة."
+    },
+    {
+      "id": "en-a2-u02-v11",
+      "kind": "vocab",
+      "difficulty": 3,
+      "prompt": "اختر الكلمة الصح عشان تكمل الجملة: We had a great ... in Cairo.",
+      "options": [
+        "holiday",
+        "delay",
+        "gate",
+        "at the time"
+      ],
+      "answer": "holiday"
+    },
+    {
+      "id": "en-a2-u02-v12",
+      "kind": "vocab",
+      "difficulty": 3,
+      "prompt": "اختر الكلمة الصح عشان تكمل الجملة: The train had a big ... so we waited.",
+      "options": [
+        "delay",
+        "trip",
+        "holiday",
+        "arrive"
+      ],
+      "answer": "delay"
+    },
+    {
+      "id": "en-a2-u02-v13",
+      "kind": "vocab",
+      "difficulty": 3,
+      "prompt": "اختر الكلمة الصح عشان تكمل الجملة: Please ... at the station early.",
+      "options": [
+        "arrive",
+        "miss",
+        "delay",
+        "gate"
+      ],
+      "answer": "arrive"
+    },
+    {
+      "id": "en-a2-u02-v14",
+      "kind": "vocab",
+      "difficulty": 3,
+      "prompt": "اختر الكلمة الصح عشان تكمل الجملة: Stand near ... number four.",
+      "options": [
+        "gate",
+        "holiday",
+        "trip",
+        "arrive"
+      ],
+      "answer": "gate"
+    },
+    {
+      "id": "en-a2-u02-g07",
+      "kind": "grammar",
+      "difficulty": 3,
+      "prompt": "اختر الجملة الصح بالماضي البسيط والمستمر:",
+      "options": [
+        "I was walking when I saw my friend.",
+        "I walked when I was seeing my friend.",
+        "I was walk when I saw my friend.",
+        "I walked when I see my friend."
+      ],
+      "answer": "I was walking when I saw my friend."
+    },
+    {
+      "id": "en-a2-u02-g08",
+      "kind": "grammar",
+      "difficulty": 3,
+      "prompt": "اختر الجملة الصح في تكوين الماضي:",
+      "options": [
+        "We had a wonderful trip last week.",
+        "We have a wonderful trip last week.",
+        "We having a wonderful trip last week.",
+        "We has a wonderful trip last week."
+      ],
+      "answer": "We had a wonderful trip last week."
+    },
+    {
+      "id": "en-a2-u02-g09",
+      "kind": "grammar",
+      "difficulty": 3,
+      "prompt": "اختر الجملة اللي فيها حروف جر صحيحة:",
+      "options": [
+        "They arrived in Cairo on Monday at five.",
+        "They arrived at Cairo in Monday on five.",
+        "They arrived on Cairo at Monday in five.",
+        "They arrived in Cairo at Monday on five."
+      ],
+      "answer": "They arrived in Cairo on Monday at five."
+    },
+    {
+      "id": "en-a2-u02-g10",
+      "kind": "grammar",
+      "difficulty": 3,
+      "prompt": "اختر التكملة الصح للماضي المستمر: They ... playing football when it rained.",
+      "options": [
+        "were",
+        "was",
+        "did",
+        "are"
+      ],
+      "answer": "were"
+    },
+    {
+      "id": "en-a2-u02-s06",
+      "kind": "speaking",
+      "difficulty": 3,
+      "prompt": "احكي بالانجليزي عن أسوأ رحلة: كنا مستنيين عند البوابة لما الرحلة اتلغت.",
+      "answer": "We were waiting at the gate when the flight was cancelled."
+    },
+    {
+      "id": "en-a2-u02-s07",
+      "kind": "speaking",
+      "difficulty": 3,
+      "prompt": "احكي موقف حصل في الماضي: أنا كنت ماشي في الشارع لما شوفت صاحبي.",
+      "answer": "I was walking in the street when I saw my friend."
+    },
+    {
+      "id": "en-a2-u02-s08",
+      "kind": "speaking",
+      "difficulty": 3,
+      "prompt": "احكي عن أحلى إجازة: ذهبت إلى إجازة رائعة في العام الماضي.",
+      "answer": "I went on a wonderful holiday last year."
+    },
+    {
+      "id": "en-a2-u02-l03",
+      "kind": "listening",
+      "difficulty": 3,
+      "prompt": "اسمع الجملة واختار معناها الدقيق:",
+      "text": "We were waiting at the gate when the flight was cancelled.",
+      "options": [
+        "كنا مستنيين عند البوابة لما الرحلة اتلغت.",
+        "وصلنا البوابة بعد ما الرحلة طارت.",
+        "إحنا فوتنا الطيارة في المطار.",
+        "الرحلة بدأت في وقتها المحدد."
+      ],
+      "answer": "كنا مستنيين عند البوابة لما الرحلة اتلغت."
+    }
   ]
 };
