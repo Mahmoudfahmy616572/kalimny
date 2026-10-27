@@ -26,6 +26,7 @@ Kalimny is not a chat-bot with a text box. It opens a **live, low-latency bidire
 14. [Running locally](#running-locally)
 15. [Deployment](#deployment)
 16. [Engineering highlights](#engineering-highlights)
+17. [Status & limitations](#status--limitations)
 
 ---
 
@@ -81,7 +82,7 @@ Kalimny is an **npm-workspaces monorepo** with a strict separation between the s
 kalimny/
 ├── apps/
 │   ├── web/          # Next.js 16 application (App Router, RSC)
-│   └── mobile/       # Flutter shell (legacy, not part of the web deployment)
+│   └── mobile/       # Flutter starter, untouched (the web app is the product — see Status)
 ├── packages/
 │   └── shared/       # Framework-agnostic domain model (TS, consumed directly)
 └── supabase/
@@ -245,6 +246,9 @@ Postgres (Supabase) with RLS. Migrations in `supabase/migrations/`:
 | `0006_persona_choice.sql` | Saved persona + `save_persona` RPC |
 | `0007_grants.sql` | Explicit table grants + default privileges (Supabase's Oct 2026 change) |
 | `0008_email_otp.sql` | `email_otps` table + `create_email_otp` / `consume_email_otp` RPCs |
+| `0009`–`0018` | Password hardening, per-level progress, XP ledger, lesson exams, exam-gated advancement, XP awards |
+
+**18 migrations in total.** All writes go through `SECURITY DEFINER` RPCs; tables expose *select-own* policies only, and the XP award table is revoked from `authenticated` entirely.
 
 ---
 
@@ -291,7 +295,7 @@ apps/web/src/
 packages/shared/src/
 ├── languages.ts    # languages, CEFR levels
 ├── curriculum.ts   # units per level
-├── personas.ts     # 8 personas, voices, system-instruction builder
+├── persona.ts      # 8 personas, voices, system-instruction builder
 ├── lessons.ts      # the lesson economy (single source of numbers)
 └── voice.ts        # provider contract, events, LessonPlan
 ```
@@ -360,6 +364,19 @@ Things worth calling out on a résumé:
 - **Custom email-OTP verification.** Built a hashed, TTL'd, attempt-capped 4-digit OTP flow (with its own Brevo SMTP relay) to work around Supabase's fixed 6-digit, rate-limited confirmation email.
 - **Modern Next.js 16 patterns.** Cache Components, Partial Prerendering, `<Suspense>` boundaries on dynamic routes, and React Server Components — with server actions for auth/onboarding.
 - **Monorepo discipline.** A framework-agnostic shared domain package (consumed as raw TS) keeps server and client types and rules in lockstep.
+
+---
+
+## Status & limitations
+
+Everything above is what is actually built. This is what is not — so nobody has to discover it:
+
+- **The product is the web app.** `apps/mobile` is still the untouched Flutter starter (counter app). It is reserved as the future native client, not a shipped app.
+- **Billing is manual.** Subscription grants happen server-side (`grant_subscription` is revoked from `authenticated`); the Paymob checkout is not wired yet.
+- **No automated tests on the web app.** The domain helpers are pure functions and were exercised manually; the only test file in the repo belongs to the Flutter template.
+- **Exam-gated advancement exists for English only.** The `fr` / `es` / `de` exam banks are empty, so those languages advance on lesson minutes alone.
+- **Placement is partially session-only.** Level and language persist through `save_home_preferences`; the extra `placement_*` diagnostics are displayed but not written, because the tables expose select-own policies only.
+- **One declared-but-unused event.** The `correction` event is typed and rendered in the transcript, but the provider does not emit it yet.
 
 ---
 
