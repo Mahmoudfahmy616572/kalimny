@@ -365,4 +365,6 @@ Things worth calling out on a résumé:
 
 ## License
 
-Private project. All rights reserved.
+Private project. All rights reserved — see [`LICENSE`](LICENSE).
+The source is public for portfolio review only; copying it into another product is not
+permitted without a written licence. Licensing enquiries: **mahmoudfahmeyy@gmail.com**
