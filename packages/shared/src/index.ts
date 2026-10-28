@@ -7,4 +7,5 @@ export * from "./persona";
 export * from "./exams";
 export * from "./exam-selection";
 export * from "./exam-library";
+export * from "./unit-summary-library";
 export * from "./voice";
