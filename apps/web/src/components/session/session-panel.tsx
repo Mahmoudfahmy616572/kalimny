@@ -919,10 +919,10 @@ export function SessionPanel({
                     ابدأ اختبار الوحدة ←
                   </Link>
                   <Link
-                    href="/review"
+                    href={`/unit-summary?session=${encodeURIComponent(summary.sessionId)}`}
                     className="inline-block rounded-full border border-border px-5 py-2 text-xs font-semibold transition hover:bg-cream"
                   >
-                    شوف الملخصات
+                    شوف ملخص الوحدة
                   </Link>
                 </div>
               </>
