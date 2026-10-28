@@ -307,10 +307,11 @@ export async function generateAndSaveSummary(options: {
       { p_user_id: userId, p_language: language },
     );
     const row = Array.isArray(rows) ? rows[0] : rows;
-    const level = (row?.level as CefrLevel | null) ?? null;
-    if (level) {
-      unit = getUnit(language as LanguageCode, level, unitIndex);
-    }
+    // لو المستوى مش متحدد (نادر)، نهبط على A1 زي ما الـ RPC بيعمل —
+    // عشان unit يتحدد دايماً والملخص يغطي محتوى الوحدة، ومايحصلش تناقض
+    // إن hasExamBank يبقى false فيبقى advance بالوقت رغم إن الوحدة ليها بنك.
+    const level = (row?.level as CefrLevel | null) ?? "A1";
+    unit = getUnit(language as LanguageCode, level, unitIndex);
   } catch (error) {
     console.error(
       "[lesson-summary] failed to load unit outline:",
